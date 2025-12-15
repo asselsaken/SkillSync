@@ -1,0 +1,638 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sm: <http://skillmatch.org/ontology#> .
+@prefix skill: <http://skillmatch.org/skill#> .
+
+# =============================================================================
+# SkillMatch Skills RDF Data
+# =============================================================================
+# RDF representation of skills with semantic relationships
+# Includes: similarTo, broaderSkill, narrowerSkill, equivalentSkill
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# PROGRAMMING LANGUAGES
+# -----------------------------------------------------------------------------
+skill:python
+    a sm:Skill ;
+    sm:skillName "Python" ;
+    sm:skillAlias "python3", "python 3", "py" ;
+    sm:broaderSkill skill:programming-languages ;
+    sm:similarTo skill:r .
+
+skill:javascript
+    a sm:Skill ;
+    sm:skillName "JavaScript" ;
+    sm:skillAlias "js", "ecmascript", "es6", "es2015", "es2020", "node.js", "nodejs" ;
+    sm:broaderSkill skill:programming-languages ;
+    sm:narrowerSkill skill:typescript, skill:react, skill:vue, skill:angular .
+
+skill:typescript
+    a sm:Skill ;
+    sm:skillName "TypeScript" ;
+    sm:skillAlias "ts" ;
+    sm:broaderSkill skill:javascript ;
+    sm:similarTo skill:javascript .
+
+skill:r
+    a sm:Skill ;
+    sm:skillName "R" ;
+    sm:skillAlias "r-lang", "r language", "rstudio" ;
+    sm:broaderSkill skill:programming-languages, skill:statistical-computing ;
+    sm:similarTo skill:python .
+
+skill:sql
+    a sm:Skill ;
+    sm:skillName "SQL" ;
+    sm:skillAlias "structured query language" ;
+    sm:broaderSkill skill:databases ;
+    sm:narrowerSkill skill:postgresql, skill:mysql, skill:sql-server, skill:sqlite .
+
+skill:postgresql
+    a sm:Skill ;
+    sm:skillName "PostgreSQL" ;
+    sm:skillAlias "postgres", "pg" ;
+    sm:broaderSkill skill:sql ;
+    sm:similarTo skill:mysql .
+
+skill:mysql
+    a sm:Skill ;
+    sm:skillName "MySQL" ;
+    sm:skillAlias "my sql" ;
+    sm:broaderSkill skill:sql ;
+    sm:similarTo skill:postgresql .
+
+# -----------------------------------------------------------------------------
+# MACHINE LEARNING & AI
+# -----------------------------------------------------------------------------
+skill:machine-learning
+    a sm:Skill ;
+    sm:skillName "Machine Learning" ;
+    sm:skillAlias "ml", "machine-learning", "ml models" ;
+    sm:broaderSkill skill:artificial-intelligence ;
+    sm:narrowerSkill skill:deep-learning, skill:supervised-learning, skill:unsupervised-learning ;
+    sm:equivalentSkill skill:applied-machine-learning ;
+    sm:similarTo skill:data-science, skill:statistical-modeling .
+
+skill:applied-machine-learning
+    a sm:Skill ;
+    sm:skillName "Applied Machine Learning" ;
+    sm:skillAlias "applied ml", "practical ml" ;
+    sm:broaderSkill skill:artificial-intelligence ;
+    sm:equivalentSkill skill:machine-learning .
+
+skill:deep-learning
+    a sm:Skill ;
+    sm:skillName "Deep Learning" ;
+    sm:skillAlias "dl", "neural networks", "neural nets", "dnn" ;
+    sm:broaderSkill skill:machine-learning ;
+    sm:narrowerSkill skill:cnn, skill:rnn, skill:transformers .
+
+skill:nlp
+    a sm:Skill ;
+    sm:skillName "NLP" ;
+    sm:skillAlias "natural language processing", "text analytics", "text mining", "computational linguistics" ;
+    sm:broaderSkill skill:machine-learning ;
+    sm:narrowerSkill skill:llms, skill:text-classification, skill:named-entity-recognition, skill:sentiment-analysis .
+
+skill:llms
+    a sm:Skill ;
+    sm:skillName "LLMs" ;
+    sm:skillAlias "large language models", "llm", "foundation models", "language models" ;
+    sm:broaderSkill skill:nlp, skill:generative-ai ;
+    sm:narrowerSkill skill:prompt-engineering, skill:rag ;
+    sm:equivalentSkill skill:large-language-models ;
+    sm:similarTo skill:transformers .
+
+skill:large-language-models
+    a sm:Skill ;
+    sm:skillName "Large Language Models" ;
+    sm:skillAlias "llms" ;
+    sm:broaderSkill skill:nlp ;
+    sm:equivalentSkill skill:llms .
+
+skill:generative-ai
+    a sm:Skill ;
+    sm:skillName "Generative AI" ;
+    sm:skillAlias "genai", "gen ai", "generative artificial intelligence" ;
+    sm:broaderSkill skill:artificial-intelligence ;
+    sm:narrowerSkill skill:llms, skill:image-generation, skill:code-generation .
+
+skill:prompt-engineering
+    a sm:Skill ;
+    sm:skillName "Prompt Engineering" ;
+    sm:skillAlias "prompting", "prompt design" ;
+    sm:broaderSkill skill:llms .
+
+skill:rag
+    a sm:Skill ;
+    sm:skillName "Retrieval-Augmented Generation (RAG)" ;
+    sm:skillAlias "rag", "retrieval augmented generation" ;
+    sm:broaderSkill skill:llms ;
+    sm:similarTo skill:embeddings .
+
+skill:embeddings
+    a sm:Skill ;
+    sm:skillName "Embeddings" ;
+    sm:skillAlias "word embeddings", "vector embeddings", "text embeddings" ;
+    sm:broaderSkill skill:nlp ;
+    sm:similarTo skill:rag .
+
+skill:transformers
+    a sm:Skill ;
+    sm:skillName "Transformers" ;
+    sm:skillAlias "transformer architecture", "attention mechanism" ;
+    sm:broaderSkill skill:deep-learning ;
+    sm:similarTo skill:llms .
+
+# -----------------------------------------------------------------------------
+# ML FRAMEWORKS & LIBRARIES
+# -----------------------------------------------------------------------------
+skill:pytorch
+    a sm:Skill ;
+    sm:skillName "PyTorch" ;
+    sm:skillAlias "torch" ;
+    sm:broaderSkill skill:deep-learning-frameworks ;
+    sm:similarTo skill:tensorflow .
+
+skill:tensorflow
+    a sm:Skill ;
+    sm:skillName "TensorFlow" ;
+    sm:skillAlias "tf", "tensor flow" ;
+    sm:broaderSkill skill:deep-learning-frameworks ;
+    sm:narrowerSkill skill:keras ;
+    sm:similarTo skill:pytorch .
+
+skill:keras
+    a sm:Skill ;
+    sm:skillName "Keras" ;
+    sm:broaderSkill skill:tensorflow .
+
+skill:scikit-learn
+    a sm:Skill ;
+    sm:skillName "Scikit-learn" ;
+    sm:skillAlias "sklearn", "scikit learn", "sk-learn" ;
+    sm:broaderSkill skill:ml-libraries .
+
+skill:pandas
+    a sm:Skill ;
+    sm:skillName "Pandas" ;
+    sm:skillAlias "pd" ;
+    sm:broaderSkill skill:data-manipulation ;
+    sm:similarTo skill:polars .
+
+skill:polars
+    a sm:Skill ;
+    sm:skillName "Polars" ;
+    sm:broaderSkill skill:data-manipulation ;
+    sm:similarTo skill:pandas .
+
+skill:numpy
+    a sm:Skill ;
+    sm:skillName "NumPy" ;
+    sm:skillAlias "np", "numpy" ;
+    sm:broaderSkill skill:data-manipulation .
+
+skill:xgboost
+    a sm:Skill ;
+    sm:skillName "XGBoost" ;
+    sm:skillAlias "xg boost", "extreme gradient boosting" ;
+    sm:broaderSkill skill:gradient-boosting ;
+    sm:similarTo skill:lightgbm, skill:catboost .
+
+skill:lightgbm
+    a sm:Skill ;
+    sm:skillName "LightGBM" ;
+    sm:skillAlias "light gbm" ;
+    sm:broaderSkill skill:gradient-boosting ;
+    sm:similarTo skill:xgboost, skill:catboost .
+
+skill:catboost
+    a sm:Skill ;
+    sm:skillName "CatBoost" ;
+    sm:skillAlias "cat boost" ;
+    sm:broaderSkill skill:gradient-boosting ;
+    sm:similarTo skill:xgboost, skill:lightgbm .
+
+# -----------------------------------------------------------------------------
+# STATISTICS
+# -----------------------------------------------------------------------------
+skill:statistics
+    a sm:Skill ;
+    sm:skillName "Statistics" ;
+    sm:skillAlias "statistical analysis", "stats" ;
+    sm:broaderSkill skill:mathematics ;
+    sm:narrowerSkill skill:hypothesis-testing, skill:regression, skill:bayesian-statistics ;
+    sm:similarTo skill:data-analysis .
+
+skill:hypothesis-testing
+    a sm:Skill ;
+    sm:skillName "Hypothesis Testing" ;
+    sm:skillAlias "statistical testing", "significance testing" ;
+    sm:broaderSkill skill:statistics ;
+    sm:narrowerSkill skill:a-b-testing, skill:parametric-tests, skill:non-parametric-tests ;
+    sm:similarTo skill:experimental-design .
+
+skill:a-b-testing
+    a sm:Skill ;
+    sm:skillName "A/B Testing" ;
+    sm:skillAlias "ab testing", "split testing", "bucket testing" ;
+    sm:broaderSkill skill:hypothesis-testing, skill:experimental-design .
+
+skill:regression
+    a sm:Skill ;
+    sm:skillName "Regression" ;
+    sm:skillAlias "regression analysis", "regression modeling" ;
+    sm:broaderSkill skill:statistics, skill:machine-learning ;
+    sm:narrowerSkill skill:linear-regression, skill:logistic-regression .
+
+skill:experimental-design
+    a sm:Skill ;
+    sm:skillName "Experimental Design" ;
+    sm:skillAlias "experiment design", "doe" ;
+    sm:broaderSkill skill:statistics ;
+    sm:narrowerSkill skill:a-b-testing ;
+    sm:equivalentSkill skill:experiment-design .
+
+skill:causal-inference
+    a sm:Skill ;
+    sm:skillName "Causal Inference" ;
+    sm:skillAlias "causality", "causal analysis" ;
+    sm:broaderSkill skill:statistics ;
+    sm:similarTo skill:experimental-design .
+
+skill:bayesian-statistics
+    a sm:Skill ;
+    sm:skillName "Bayesian Statistics" ;
+    sm:skillAlias "bayesian inference", "bayesian analysis", "bayesian forecasting" ;
+    sm:broaderSkill skill:statistics .
+
+# -----------------------------------------------------------------------------
+# DATA SCIENCE & ANALYSIS
+# -----------------------------------------------------------------------------
+skill:data-science
+    a sm:Skill ;
+    sm:skillName "Data Science" ;
+    sm:skillAlias "ds" ;
+    sm:narrowerSkill skill:machine-learning, skill:data-analysis, skill:data-visualization .
+
+skill:data-analysis
+    a sm:Skill ;
+    sm:skillName "Data Analysis" ;
+    sm:skillAlias "data analytics", "analytics" ;
+    sm:broaderSkill skill:data-science ;
+    sm:narrowerSkill skill:exploratory-analysis, skill:descriptive-analytics, skill:predictive-analytics ;
+    sm:similarTo skill:statistics .
+
+skill:data-visualization
+    a sm:Skill ;
+    sm:skillName "Data Visualization" ;
+    sm:skillAlias "data viz", "dataviz" ;
+    sm:broaderSkill skill:data-science ;
+    sm:narrowerSkill skill:dashboards .
+
+skill:dashboards
+    a sm:Skill ;
+    sm:skillName "Dashboards" ;
+    sm:skillAlias "dashboard" ;
+    sm:broaderSkill skill:data-visualization .
+
+skill:matplotlib
+    a sm:Skill ;
+    sm:skillName "Matplotlib" ;
+    sm:skillAlias "plt" ;
+    sm:broaderSkill skill:data-visualization ;
+    sm:similarTo skill:seaborn .
+
+skill:seaborn
+    a sm:Skill ;
+    sm:skillName "Seaborn" ;
+    sm:skillAlias "sns" ;
+    sm:broaderSkill skill:data-visualization ;
+    sm:similarTo skill:matplotlib .
+
+# -----------------------------------------------------------------------------
+# BI TOOLS
+# -----------------------------------------------------------------------------
+skill:tableau
+    a sm:Skill ;
+    sm:skillName "Tableau" ;
+    sm:broaderSkill skill:bi-tools ;
+    sm:similarTo skill:power-bi, skill:looker .
+
+skill:power-bi
+    a sm:Skill ;
+    sm:skillName "Power BI" ;
+    sm:skillAlias "powerbi" ;
+    sm:broaderSkill skill:bi-tools ;
+    sm:similarTo skill:tableau, skill:looker .
+
+skill:looker
+    a sm:Skill ;
+    sm:skillName "Looker" ;
+    sm:broaderSkill skill:bi-tools ;
+    sm:similarTo skill:tableau, skill:power-bi .
+
+# -----------------------------------------------------------------------------
+# CLOUD PLATFORMS
+# -----------------------------------------------------------------------------
+skill:aws
+    a sm:Skill ;
+    sm:skillName "AWS" ;
+    sm:skillAlias "amazon web services", "amazon aws" ;
+    sm:broaderSkill skill:cloud-platforms ;
+    sm:narrowerSkill skill:s3, skill:ec2, skill:sagemaker, skill:lambda ;
+    sm:similarTo skill:gcp, skill:azure .
+
+skill:gcp
+    a sm:Skill ;
+    sm:skillName "GCP" ;
+    sm:skillAlias "google cloud", "google cloud platform" ;
+    sm:broaderSkill skill:cloud-platforms ;
+    sm:narrowerSkill skill:bigquery, skill:vertex-ai ;
+    sm:similarTo skill:aws, skill:azure .
+
+skill:azure
+    a sm:Skill ;
+    sm:skillName "Azure" ;
+    sm:skillAlias "microsoft azure", "ms azure" ;
+    sm:broaderSkill skill:cloud-platforms ;
+    sm:narrowerSkill skill:azure-ml ;
+    sm:similarTo skill:aws, skill:gcp .
+
+# -----------------------------------------------------------------------------
+# DEVOPS
+# -----------------------------------------------------------------------------
+skill:docker
+    a sm:Skill ;
+    sm:skillName "Docker" ;
+    sm:skillAlias "containers", "containerization" ;
+    sm:broaderSkill skill:devops ;
+    sm:similarTo skill:kubernetes .
+
+skill:kubernetes
+    a sm:Skill ;
+    sm:skillName "Kubernetes" ;
+    sm:skillAlias "k8s" ;
+    sm:broaderSkill skill:devops ;
+    sm:similarTo skill:docker .
+
+skill:git
+    a sm:Skill ;
+    sm:skillName "Git" ;
+    sm:skillAlias "version control", "github", "gitlab", "bitbucket" ;
+    sm:broaderSkill skill:devops .
+
+skill:ci-cd
+    a sm:Skill ;
+    sm:skillName "CI/CD" ;
+    sm:skillAlias "continuous integration", "continuous deployment", "cicd" ;
+    sm:broaderSkill skill:devops ;
+    sm:narrowerSkill skill:github-actions, skill:jenkins .
+
+# -----------------------------------------------------------------------------
+# MLOPS
+# -----------------------------------------------------------------------------
+skill:mlops
+    a sm:Skill ;
+    sm:skillName "MLOps" ;
+    sm:skillAlias "ml ops", "machine learning operations" ;
+    sm:broaderSkill skill:devops, skill:machine-learning ;
+    sm:narrowerSkill skill:model-deployment, skill:model-monitoring, skill:model-versioning .
+
+skill:model-deployment
+    a sm:Skill ;
+    sm:skillName "Model Deployment" ;
+    sm:skillAlias "ml deployment", "deploying models" ;
+    sm:broaderSkill skill:mlops .
+
+skill:model-monitoring
+    a sm:Skill ;
+    sm:skillName "Model Monitoring" ;
+    sm:skillAlias "ml monitoring" ;
+    sm:broaderSkill skill:mlops .
+
+# -----------------------------------------------------------------------------
+# BIG DATA
+# -----------------------------------------------------------------------------
+skill:spark
+    a sm:Skill ;
+    sm:skillName "Spark" ;
+    sm:skillAlias "apache spark", "pyspark" ;
+    sm:broaderSkill skill:big-data ;
+    sm:similarTo skill:databricks .
+
+skill:databricks
+    a sm:Skill ;
+    sm:skillName "Databricks" ;
+    sm:broaderSkill skill:big-data ;
+    sm:similarTo skill:spark .
+
+# -----------------------------------------------------------------------------
+# DATA ENGINEERING
+# -----------------------------------------------------------------------------
+skill:data-pipelines
+    a sm:Skill ;
+    sm:skillName "Data Pipelines" ;
+    sm:skillAlias "data pipeline", "etl", "elt" ;
+    sm:broaderSkill skill:data-engineering ;
+    sm:similarTo skill:feature-pipelines .
+
+skill:data-cleaning
+    a sm:Skill ;
+    sm:skillName "Data Cleaning" ;
+    sm:skillAlias "data cleansing", "data wrangling" ;
+    sm:broaderSkill skill:data-engineering .
+
+skill:data-transformation
+    a sm:Skill ;
+    sm:skillName "Data Transformation" ;
+    sm:broaderSkill skill:data-engineering .
+
+# -----------------------------------------------------------------------------
+# FRONTEND FRAMEWORKS
+# -----------------------------------------------------------------------------
+skill:react
+    a sm:Skill ;
+    sm:skillName "React" ;
+    sm:skillAlias "reactjs", "react.js" ;
+    sm:broaderSkill skill:javascript, skill:frontend-frameworks ;
+    sm:narrowerSkill skill:next-js ;
+    sm:similarTo skill:vue, skill:angular .
+
+skill:vue
+    a sm:Skill ;
+    sm:skillName "Vue" ;
+    sm:skillAlias "vuejs", "vue.js" ;
+    sm:broaderSkill skill:javascript, skill:frontend-frameworks ;
+    sm:narrowerSkill skill:nuxt ;
+    sm:similarTo skill:react, skill:angular .
+
+skill:angular
+    a sm:Skill ;
+    sm:skillName "Angular" ;
+    sm:skillAlias "angularjs" ;
+    sm:broaderSkill skill:javascript, skill:frontend-frameworks ;
+    sm:similarTo skill:react, skill:vue .
+
+# -----------------------------------------------------------------------------
+# WEB DEVELOPMENT
+# -----------------------------------------------------------------------------
+skill:html
+    a sm:Skill ;
+    sm:skillName "HTML" ;
+    sm:skillAlias "html5" ;
+    sm:broaderSkill skill:frontend-development .
+
+skill:css
+    a sm:Skill ;
+    sm:skillName "CSS" ;
+    sm:skillAlias "css3", "stylesheets" ;
+    sm:broaderSkill skill:frontend-development ;
+    sm:similarTo skill:sass .
+
+skill:sass
+    a sm:Skill ;
+    sm:skillName "SASS" ;
+    sm:skillAlias "scss" ;
+    sm:broaderSkill skill:css .
+
+skill:webpack
+    a sm:Skill ;
+    sm:skillName "Webpack" ;
+    sm:skillAlias "module bundler" ;
+    sm:broaderSkill skill:frontend-development .
+
+skill:rest-apis
+    a sm:Skill ;
+    sm:skillName "REST APIs" ;
+    sm:skillAlias "rest", "restful", "restful apis", "api development" ;
+    sm:broaderSkill skill:backend-development ;
+    sm:similarTo skill:graphql .
+
+skill:graphql
+    a sm:Skill ;
+    sm:skillName "GraphQL" ;
+    sm:skillAlias "graph ql" ;
+    sm:broaderSkill skill:backend-development ;
+    sm:similarTo skill:rest-apis .
+
+skill:microservices
+    a sm:Skill ;
+    sm:skillName "Microservices" ;
+    sm:skillAlias "microservice architecture", "micro services" ;
+    sm:broaderSkill skill:backend-development .
+
+skill:jest
+    a sm:Skill ;
+    sm:skillName "Jest" ;
+    sm:skillAlias "jest testing" ;
+    sm:broaderSkill skill:testing .
+
+skill:testing
+    a sm:Skill ;
+    sm:skillName "Testing" ;
+    sm:skillAlias "unit testing", "integration testing", "test automation" ;
+    sm:broaderSkill skill:software-engineering .
+
+skill:software-engineering
+    a sm:Skill ;
+    sm:skillName "Software Engineering" ;
+    sm:skillAlias "software development", "swe", "programming" .
+
+skill:backend-development
+    a sm:Skill ;
+    sm:skillName "Backend Development" ;
+    sm:skillAlias "backend", "server-side" ;
+    sm:broaderSkill skill:software-engineering ;
+    sm:narrowerSkill skill:rest-apis, skill:graphql, skill:microservices .
+
+skill:frontend-development
+    a sm:Skill ;
+    sm:skillName "Frontend Development" ;
+    sm:skillAlias "frontend", "client-side", "ui development" ;
+    sm:broaderSkill skill:software-engineering ;
+    sm:narrowerSkill skill:html, skill:css, skill:webpack .
+
+# -----------------------------------------------------------------------------
+# TOP-LEVEL CATEGORIES
+# -----------------------------------------------------------------------------
+skill:programming-languages
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Programming Languages" ;
+    sm:narrowerSkill skill:python, skill:javascript, skill:r .
+
+skill:databases
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Databases" ;
+    sm:narrowerSkill skill:sql, skill:nosql-databases .
+
+skill:artificial-intelligence
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Artificial Intelligence" ;
+    sm:skillAlias "ai", "artificial intelligence (ai)" ;
+    sm:narrowerSkill skill:machine-learning, skill:generative-ai .
+
+skill:deep-learning-frameworks
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Deep Learning Frameworks" ;
+    sm:narrowerSkill skill:pytorch, skill:tensorflow .
+
+skill:ml-libraries
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "ML Libraries" ;
+    sm:narrowerSkill skill:scikit-learn, skill:xgboost, skill:lightgbm .
+
+skill:gradient-boosting
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Gradient Boosting" ;
+    sm:narrowerSkill skill:xgboost, skill:lightgbm, skill:catboost .
+
+skill:cloud-platforms
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Cloud Platforms" ;
+    sm:narrowerSkill skill:aws, skill:gcp, skill:azure .
+
+skill:devops
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "DevOps" ;
+    sm:narrowerSkill skill:docker, skill:kubernetes, skill:git, skill:ci-cd .
+
+skill:bi-tools
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "BI Tools" ;
+    sm:narrowerSkill skill:tableau, skill:power-bi, skill:looker .
+
+skill:data-engineering
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Data Engineering" ;
+    sm:narrowerSkill skill:data-pipelines, skill:data-cleaning, skill:data-transformation .
+
+skill:big-data
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Big Data" ;
+    sm:narrowerSkill skill:spark, skill:databricks .
+
+skill:frontend-frameworks
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Frontend Frameworks" ;
+    sm:narrowerSkill skill:react, skill:vue, skill:angular .
+
+skill:mathematics
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Mathematics" ;
+    sm:narrowerSkill skill:statistics, skill:linear-algebra, skill:calculus .
+
+skill:statistical-computing
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Statistical Computing" ;
+    sm:narrowerSkill skill:r, skill:sas, skill:spss .
+
+skill:data-manipulation
+    a sm:Skill, sm:SkillCategory ;
+    sm:skillName "Data Manipulation" ;
+    sm:narrowerSkill skill:pandas, skill:numpy, skill:polars .
+

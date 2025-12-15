@@ -1,0 +1,329 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sm: <http://skillmatch.org/ontology#> .
+@prefix schema: <http://schema.org/> .
+
+# =============================================================================
+# SkillMatch OWL Ontology
+# =============================================================================
+# This ontology defines the core entities for job-skill matching:
+# - Person (Job Seekers)
+# - JobPosting (Job Listings)
+# - Skill (Technical and Soft Skills)
+# =============================================================================
+
+<http://skillmatch.org/ontology>
+    a owl:Ontology ;
+    rdfs:label "SkillMatch Ontology"@en ;
+    rdfs:comment "An ontology for matching job seekers with job postings based on skills"@en ;
+    owl:versionInfo "1.0.0" .
+
+# =============================================================================
+# CLASSES
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Person Class - Represents job seekers/candidates
+# -----------------------------------------------------------------------------
+sm:Person
+    a owl:Class ;
+    rdfs:label "Person"@en ;
+    rdfs:comment "A person seeking employment, typically a job candidate"@en ;
+    rdfs:subClassOf schema:Person .
+
+# -----------------------------------------------------------------------------
+# JobPosting Class - Represents job listings
+# -----------------------------------------------------------------------------
+sm:JobPosting
+    a owl:Class ;
+    rdfs:label "Job Posting"@en ;
+    rdfs:comment "A job posting or listing from an employer"@en ;
+    rdfs:subClassOf schema:JobPosting .
+
+# -----------------------------------------------------------------------------
+# Skill Class - Represents skills (technical or soft)
+# -----------------------------------------------------------------------------
+sm:Skill
+    a owl:Class ;
+    rdfs:label "Skill"@en ;
+    rdfs:comment "A skill or competency that can be possessed by a person or required by a job"@en ;
+    rdfs:subClassOf skos:Concept .
+
+# -----------------------------------------------------------------------------
+# SkillCategory Class - Categories for organizing skills
+# -----------------------------------------------------------------------------
+sm:SkillCategory
+    a owl:Class ;
+    rdfs:label "Skill Category"@en ;
+    rdfs:comment "A category for grouping related skills"@en ;
+    rdfs:subClassOf skos:ConceptScheme .
+
+# -----------------------------------------------------------------------------
+# Organization Class - Companies/Employers
+# -----------------------------------------------------------------------------
+sm:Organization
+    a owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:comment "An organization or company that posts jobs"@en ;
+    rdfs:subClassOf schema:Organization .
+
+# =============================================================================
+# OBJECT PROPERTIES
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Person -> Skill relationships
+# -----------------------------------------------------------------------------
+sm:hasSkill
+    a owl:ObjectProperty ;
+    rdfs:label "has skill"@en ;
+    rdfs:comment "Indicates that a person possesses a particular skill"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range sm:Skill .
+
+sm:hasExpertiseLevel
+    a owl:ObjectProperty ;
+    rdfs:label "has expertise level"@en ;
+    rdfs:comment "Links a skill possession to an expertise level"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range sm:ExpertiseLevel .
+
+# -----------------------------------------------------------------------------
+# JobPosting -> Skill relationships
+# -----------------------------------------------------------------------------
+sm:requiresSkill
+    a owl:ObjectProperty ;
+    rdfs:label "requires skill"@en ;
+    rdfs:comment "Indicates that a job posting requires a particular skill"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range sm:Skill .
+
+sm:prefersSkill
+    a owl:ObjectProperty ;
+    rdfs:label "prefers skill"@en ;
+    rdfs:comment "Indicates that a job posting prefers but doesn't require a skill"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range sm:Skill .
+
+# -----------------------------------------------------------------------------
+# JobPosting -> Organization relationship
+# -----------------------------------------------------------------------------
+sm:postedBy
+    a owl:ObjectProperty ;
+    rdfs:label "posted by"@en ;
+    rdfs:comment "The organization that posted the job"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range sm:Organization .
+
+# -----------------------------------------------------------------------------
+# Skill -> Skill relationships (Semantic Similarity)
+# -----------------------------------------------------------------------------
+sm:similarTo
+    a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "similar to"@en ;
+    rdfs:comment "Indicates that two skills are similar and can be considered related"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range sm:Skill ;
+    rdfs:subPropertyOf skos:closeMatch .
+
+sm:broaderSkill
+    a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "broader skill"@en ;
+    rdfs:comment "Indicates a more general/parent skill"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range sm:Skill ;
+    rdfs:subPropertyOf skos:broader .
+
+sm:narrowerSkill
+    a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "narrower skill"@en ;
+    rdfs:comment "Indicates a more specific/child skill"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range sm:Skill ;
+    rdfs:subPropertyOf skos:narrower ;
+    owl:inverseOf sm:broaderSkill .
+
+sm:equivalentSkill
+    a owl:ObjectProperty, owl:SymmetricProperty, owl:TransitiveProperty ;
+    rdfs:label "equivalent skill"@en ;
+    rdfs:comment "Indicates that two skills are essentially the same"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range sm:Skill ;
+    rdfs:subPropertyOf skos:exactMatch .
+
+# -----------------------------------------------------------------------------
+# Person -> JobPosting relationships
+# -----------------------------------------------------------------------------
+sm:appliedTo
+    a owl:ObjectProperty ;
+    rdfs:label "applied to"@en ;
+    rdfs:comment "Indicates that a person has applied to a job posting"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range sm:JobPosting .
+
+sm:matchedWith
+    a owl:ObjectProperty ;
+    rdfs:label "matched with"@en ;
+    rdfs:comment "Indicates a matching relationship between person and job"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range sm:JobPosting .
+
+# =============================================================================
+# DATATYPE PROPERTIES
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Person properties
+# -----------------------------------------------------------------------------
+sm:personName
+    a owl:DatatypeProperty ;
+    rdfs:label "person name"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range xsd:string .
+
+sm:email
+    a owl:DatatypeProperty ;
+    rdfs:label "email"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range xsd:string .
+
+sm:resumeText
+    a owl:DatatypeProperty ;
+    rdfs:label "resume text"@en ;
+    rdfs:comment "The extracted text from a person's resume"@en ;
+    rdfs:domain sm:Person ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# JobPosting properties
+# -----------------------------------------------------------------------------
+sm:jobTitle
+    a owl:DatatypeProperty ;
+    rdfs:label "job title"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:jobDescription
+    a owl:DatatypeProperty ;
+    rdfs:label "job description"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:location
+    a owl:DatatypeProperty ;
+    rdfs:label "location"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:salary
+    a owl:DatatypeProperty ;
+    rdfs:label "salary"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:jobUrl
+    a owl:DatatypeProperty ;
+    rdfs:label "job URL"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:anyURI .
+
+sm:datePosted
+    a owl:DatatypeProperty ;
+    rdfs:label "date posted"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:date .
+
+# -----------------------------------------------------------------------------
+# Skill properties
+# -----------------------------------------------------------------------------
+sm:skillName
+    a owl:DatatypeProperty ;
+    rdfs:label "skill name"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:string .
+
+sm:skillAlias
+    a owl:DatatypeProperty ;
+    rdfs:label "skill alias"@en ;
+    rdfs:comment "Alternative names or abbreviations for the skill"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:string .
+
+sm:skillDescription
+    a owl:DatatypeProperty ;
+    rdfs:label "skill description"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Organization properties
+# -----------------------------------------------------------------------------
+sm:organizationName
+    a owl:DatatypeProperty ;
+    rdfs:label "organization name"@en ;
+    rdfs:domain sm:Organization ;
+    rdfs:range xsd:string .
+
+# -----------------------------------------------------------------------------
+# Match properties
+# -----------------------------------------------------------------------------
+sm:matchScore
+    a owl:DatatypeProperty ;
+    rdfs:label "match score"@en ;
+    rdfs:comment "A numerical score indicating how well a person matches a job"@en ;
+    rdfs:range xsd:decimal .
+
+sm:skillWeight
+    a owl:DatatypeProperty ;
+    rdfs:label "skill weight"@en ;
+    rdfs:comment "The weight or importance of a skill match"@en ;
+    rdfs:range xsd:decimal .
+
+# =============================================================================
+# EXPERTISE LEVELS (Individuals)
+# =============================================================================
+
+sm:ExpertiseLevel
+    a owl:Class ;
+    rdfs:label "Expertise Level"@en ;
+    rdfs:comment "Level of expertise in a skill"@en .
+
+sm:Beginner
+    a sm:ExpertiseLevel ;
+    rdfs:label "Beginner"@en ;
+    sm:skillWeight "0.3"^^xsd:decimal .
+
+sm:Intermediate
+    a sm:ExpertiseLevel ;
+    rdfs:label "Intermediate"@en ;
+    sm:skillWeight "0.6"^^xsd:decimal .
+
+sm:Advanced
+    a sm:ExpertiseLevel ;
+    rdfs:label "Advanced"@en ;
+    sm:skillWeight "0.85"^^xsd:decimal .
+
+sm:Expert
+    a sm:ExpertiseLevel ;
+    rdfs:label "Expert"@en ;
+    sm:skillWeight "1.0"^^xsd:decimal .
+
+# =============================================================================
+# INFERENCE RULES
+# =============================================================================
+# The following semantic rules are applied through OWL property characteristics:
+#
+# 1. Equivalence Rule (owl:SymmetricProperty, owl:TransitiveProperty)
+#    sm:equivalentSkill enables bidirectional skill equivalence matching
+#
+# 2. Similarity Rule (skos:closeMatch)
+#    sm:similarTo enables partial matching between related skills
+#
+# 3. Hierarchy Rule (owl:TransitiveProperty)
+#    sm:broaderSkill/sm:narrowerSkill enables transitive skill matching
+#    Example: PyTorch -> Deep Learning -> Machine Learning
+# =============================================================================
+

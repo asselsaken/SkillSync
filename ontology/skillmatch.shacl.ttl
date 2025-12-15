@@ -1,0 +1,319 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sm: <http://skillmatch.org/ontology#> .
+@prefix smshape: <http://skillmatch.org/shapes#> .
+
+# =============================================================================
+# SkillMatch SHACL Shapes
+# =============================================================================
+# SHACL (Shapes Constraint Language) shapes for validating RDF data
+# in the SkillMatch ontology. These shapes ensure data quality and
+# consistency across Person, JobPosting, and Skill entities.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Person Shape - Validates job seekers/candidates
+# -----------------------------------------------------------------------------
+smshape:PersonShape
+    a sh:NodeShape ;
+    sh:targetClass sm:Person ;
+    rdfs:label "Person Shape"@en ;
+    rdfs:comment "Validates Person entities in the knowledge graph"@en ;
+    
+    # Required: Person must have a name
+    sh:property [
+        sh:path sm:personName ;
+        sh:name "person name" ;
+        sh:description "Every person must have a name" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 1 ;
+        sh:maxLength 200 ;
+        sh:severity sh:Violation ;
+        sh:message "Person must have exactly one name (1-200 characters)"@en ;
+    ] ;
+    
+    # Optional: Email must be valid format if present
+    sh:property [
+        sh:path sm:email ;
+        sh:name "email" ;
+        sh:description "Email address for contact" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:pattern "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" ;
+        sh:severity sh:Warning ;
+        sh:message "Email must be a valid email format"@en ;
+    ] ;
+    
+    # Required: Person must have at least one skill
+    sh:property [
+        sh:path sm:hasSkill ;
+        sh:name "has skill" ;
+        sh:description "Skills possessed by the person" ;
+        sh:class sm:Skill ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "Person must have at least one skill"@en ;
+    ] ;
+    
+    # Optional: Resume text
+    sh:property [
+        sh:path sm:resumeText ;
+        sh:name "resume text" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:maxLength 100000 ;
+        sh:severity sh:Info ;
+        sh:message "Resume text should not exceed 100,000 characters"@en ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# JobPosting Shape - Validates job listings
+# -----------------------------------------------------------------------------
+smshape:JobPostingShape
+    a sh:NodeShape ;
+    sh:targetClass sm:JobPosting ;
+    rdfs:label "Job Posting Shape"@en ;
+    rdfs:comment "Validates JobPosting entities in the knowledge graph"@en ;
+    
+    # Required: Job title
+    sh:property [
+        sh:path sm:jobTitle ;
+        sh:name "job title" ;
+        sh:description "The title of the job position" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 2 ;
+        sh:maxLength 200 ;
+        sh:severity sh:Violation ;
+        sh:message "Job posting must have exactly one title (2-200 characters)"@en ;
+    ] ;
+    
+    # Required: Job description
+    sh:property [
+        sh:path sm:jobDescription ;
+        sh:name "job description" ;
+        sh:description "Full description of the job" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 50 ;
+        sh:severity sh:Violation ;
+        sh:message "Job posting must have a description (at least 50 characters)"@en ;
+    ] ;
+    
+    # Required: At least one required skill
+    sh:property [
+        sh:path sm:requiresSkill ;
+        sh:name "requires skill" ;
+        sh:description "Skills required for the job" ;
+        sh:class sm:Skill ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "Job posting must require at least one skill"@en ;
+    ] ;
+    
+    # Optional: Preferred skills
+    sh:property [
+        sh:path sm:prefersSkill ;
+        sh:name "prefers skill" ;
+        sh:description "Skills preferred but not required" ;
+        sh:class sm:Skill ;
+        sh:severity sh:Info ;
+    ] ;
+    
+    # Required: Posted by organization
+    sh:property [
+        sh:path sm:postedBy ;
+        sh:name "posted by" ;
+        sh:description "The organization posting the job" ;
+        sh:class sm:Organization ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "Job posting must be associated with an organization"@en ;
+    ] ;
+    
+    # Optional: Location
+    sh:property [
+        sh:path sm:location ;
+        sh:name "location" ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:maxLength 200 ;
+        sh:severity sh:Info ;
+    ] ;
+    
+    # Optional: Job URL must be valid URI
+    sh:property [
+        sh:path sm:jobUrl ;
+        sh:name "job URL" ;
+        sh:datatype xsd:anyURI ;
+        sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Job URL must be a valid URI"@en ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# Skill Shape - Validates skills
+# -----------------------------------------------------------------------------
+smshape:SkillShape
+    a sh:NodeShape ;
+    sh:targetClass sm:Skill ;
+    rdfs:label "Skill Shape"@en ;
+    rdfs:comment "Validates Skill entities in the knowledge graph"@en ;
+    
+    # Required: Skill name (prefLabel)
+    sh:property [
+        sh:path sm:skillName ;
+        sh:name "skill name" ;
+        sh:description "The primary name of the skill" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 1 ;
+        sh:maxLength 100 ;
+        sh:severity sh:Violation ;
+        sh:message "Skill must have exactly one name (1-100 characters)"@en ;
+    ] ;
+    
+    # Optional: Aliases (multiple allowed)
+    sh:property [
+        sh:path sm:skillAlias ;
+        sh:name "skill alias" ;
+        sh:description "Alternative names or abbreviations" ;
+        sh:datatype xsd:string ;
+        sh:maxLength 100 ;
+        sh:severity sh:Info ;
+    ] ;
+    
+    # Optional: Similar skills must be skills
+    sh:property [
+        sh:path sm:similarTo ;
+        sh:name "similar to" ;
+        sh:description "Related skills" ;
+        sh:class sm:Skill ;
+        sh:severity sh:Warning ;
+        sh:message "similarTo must reference valid Skill entities"@en ;
+    ] ;
+    
+    # Optional: Broader skills must be skills
+    sh:property [
+        sh:path sm:broaderSkill ;
+        sh:name "broader skill" ;
+        sh:description "More general parent skills" ;
+        sh:class sm:Skill ;
+        sh:severity sh:Warning ;
+        sh:message "broaderSkill must reference valid Skill entities"@en ;
+    ] ;
+    
+    # Optional: Narrower skills must be skills
+    sh:property [
+        sh:path sm:narrowerSkill ;
+        sh:name "narrower skill" ;
+        sh:description "More specific child skills" ;
+        sh:class sm:Skill ;
+        sh:severity sh:Warning ;
+        sh:message "narrowerSkill must reference valid Skill entities"@en ;
+    ] ;
+    
+    # Constraint: A skill cannot be similar to itself
+    sh:sparql [
+        sh:message "A skill cannot be marked as similar to itself"@en ;
+        sh:severity sh:Violation ;
+        sh:prefixes [
+            sh:declare [
+                sh:prefix "sm" ;
+                sh:namespace "http://skillmatch.org/ontology#"^^xsd:anyURI ;
+            ]
+        ] ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this sm:similarTo $this .
+            }
+        """ ;
+    ] ;
+    
+    # Constraint: A skill cannot be its own broader/narrower skill
+    sh:sparql [
+        sh:message "A skill cannot be its own broader or narrower skill"@en ;
+        sh:severity sh:Violation ;
+        sh:prefixes [
+            sh:declare [
+                sh:prefix "sm" ;
+                sh:namespace "http://skillmatch.org/ontology#"^^xsd:anyURI ;
+            ]
+        ] ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                { $this sm:broaderSkill $this . }
+                UNION
+                { $this sm:narrowerSkill $this . }
+            }
+        """ ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# Organization Shape - Validates organizations/companies
+# -----------------------------------------------------------------------------
+smshape:OrganizationShape
+    a sh:NodeShape ;
+    sh:targetClass sm:Organization ;
+    rdfs:label "Organization Shape"@en ;
+    rdfs:comment "Validates Organization entities"@en ;
+    
+    # Required: Organization name
+    sh:property [
+        sh:path sm:organizationName ;
+        sh:name "organization name" ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minLength 1 ;
+        sh:maxLength 200 ;
+        sh:severity sh:Violation ;
+        sh:message "Organization must have exactly one name"@en ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# Match Validation - Ensures match scores are valid
+# -----------------------------------------------------------------------------
+smshape:MatchScoreShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf sm:matchScore ;
+    rdfs:label "Match Score Shape"@en ;
+    
+    sh:property [
+        sh:path sm:matchScore ;
+        sh:name "match score" ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 100 ;
+        sh:severity sh:Violation ;
+        sh:message "Match score must be between 0 and 100"@en ;
+    ] .
+
+# -----------------------------------------------------------------------------
+# Skill Weight Validation
+# -----------------------------------------------------------------------------
+smshape:SkillWeightShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf sm:skillWeight ;
+    rdfs:label "Skill Weight Shape"@en ;
+    
+    sh:property [
+        sh:path sm:skillWeight ;
+        sh:name "skill weight" ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 1 ;
+        sh:severity sh:Violation ;
+        sh:message "Skill weight must be between 0 and 1"@en ;
+    ] .
+

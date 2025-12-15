@@ -1,0 +1,246 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sm: <http://skillmatch.org/ontology#> .
+@prefix skill: <http://skillmatch.org/skill#> .
+@prefix job: <http://skillmatch.org/job#> .
+@prefix person: <http://skillmatch.org/person#> .
+@prefix org: <http://skillmatch.org/org#> .
+
+# =============================================================================
+# Sample RDF Data - Organizations, Jobs, and People
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# ORGANIZATIONS
+# -----------------------------------------------------------------------------
+org:adobe
+    a sm:Organization ;
+    sm:organizationName "Adobe" .
+
+org:healthleap
+    a sm:Organization ;
+    sm:organizationName "HealthLeap AI" .
+
+org:google
+    a sm:Organization ;
+    sm:organizationName "Google" .
+
+org:meta
+    a sm:Organization ;
+    sm:organizationName "Meta" .
+
+org:netflix
+    a sm:Organization ;
+    sm:organizationName "Netflix" .
+
+org:stripe
+    a sm:Organization ;
+    sm:organizationName "Stripe" .
+
+org:airbnb
+    a sm:Organization ;
+    sm:organizationName "Airbnb" .
+
+org:microsoft
+    a sm:Organization ;
+    sm:organizationName "Microsoft" .
+
+org:amazon
+    a sm:Organization ;
+    sm:organizationName "Amazon" .
+
+# -----------------------------------------------------------------------------
+# JOB POSTINGS
+# -----------------------------------------------------------------------------
+job:adobe-ds-1
+    a sm:JobPosting ;
+    sm:jobTitle "Product Data Scientist, Applied ML" ;
+    sm:jobDescription "Design, build and productionize machine-learning models that generate insights, segment users, predict outcomes, and drive measurable business impact." ;
+    sm:location "San Jose, CA" ;
+    sm:postedBy org:adobe ;
+    sm:jobUrl "https://careers.adobe.com/us/en/job/ADOBUSR161952EXTERNALENUS/Product-Data-Scientist-Applied-ML"^^xsd:anyURI ;
+    sm:datePosted "2024-01-15"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:sql, skill:pandas, skill:numpy, skill:scikit-learn ;
+    sm:requiresSkill skill:machine-learning, skill:data-visualization, skill:statistics ;
+    sm:requiresSkill skill:spark, skill:databricks, skill:git ;
+    sm:prefersSkill skill:nlp, skill:llms, skill:prompt-engineering, skill:rag ;
+    sm:prefersSkill skill:mlops, skill:model-deployment .
+
+job:healthleap-ds-1
+    a sm:JobPosting ;
+    sm:jobTitle "Data Scientist" ;
+    sm:jobDescription "Own end-to-end modeling from financial incentives and problem framing to a validated model. Estimate impact with rigorous retrospective analyses." ;
+    sm:location "San Francisco, CA" ;
+    sm:postedBy org:healthleap ;
+    sm:jobUrl "https://jobs.ashbyhq.com/healthleap/1af5f30d-f12f-46ba-8fd5-c66d749fff5d"^^xsd:anyURI ;
+    sm:datePosted "2024-01-20"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:sql, skill:pandas, skill:scikit-learn ;
+    sm:requiresSkill skill:xgboost, skill:lightgbm, skill:statistics ;
+    sm:requiresSkill skill:hypothesis-testing, skill:experimental-design ;
+    sm:requiresSkill skill:data-visualization, skill:dashboards ;
+    sm:prefersSkill skill:pytorch, skill:transformers, skill:llms ;
+    sm:prefersSkill skill:mlops, skill:bayesian-statistics, skill:causal-inference .
+
+job:google-mle-1
+    a sm:JobPosting ;
+    sm:jobTitle "Machine Learning Engineer" ;
+    sm:jobDescription "Build and deploy production ML systems at scale. Work on cutting-edge AI/ML projects." ;
+    sm:location "Mountain View, CA" ;
+    sm:postedBy org:google ;
+    sm:datePosted "2024-01-18"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:tensorflow, skill:pytorch ;
+    sm:requiresSkill skill:machine-learning, skill:deep-learning ;
+    sm:requiresSkill skill:gcp, skill:kubernetes, skill:docker ;
+    sm:requiresSkill skill:mlops, skill:model-deployment ;
+    sm:prefersSkill skill:llms, skill:transformers, skill:rag .
+
+job:meta-ds-1
+    a sm:JobPosting ;
+    sm:jobTitle "Data Scientist, Product Analytics" ;
+    sm:jobDescription "Use data to understand user behavior and drive product decisions through experimentation and analysis." ;
+    sm:location "Menlo Park, CA" ;
+    sm:postedBy org:meta ;
+    sm:datePosted "2024-01-22"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:sql, skill:statistics ;
+    sm:requiresSkill skill:a-b-testing, skill:hypothesis-testing ;
+    sm:requiresSkill skill:data-analysis, skill:data-visualization ;
+    sm:prefersSkill skill:machine-learning, skill:causal-inference .
+
+job:netflix-mle-1
+    a sm:JobPosting ;
+    sm:jobTitle "Senior ML Engineer - Recommendations" ;
+    sm:jobDescription "Build recommendation systems that personalize the Netflix experience for millions of users worldwide." ;
+    sm:location "Los Gatos, CA" ;
+    sm:postedBy org:netflix ;
+    sm:datePosted "2024-01-25"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:pytorch, skill:tensorflow ;
+    sm:requiresSkill skill:deep-learning, skill:machine-learning ;
+    sm:requiresSkill skill:spark, skill:aws ;
+    sm:requiresSkill skill:mlops, skill:model-deployment, skill:model-monitoring ;
+    sm:prefersSkill skill:transformers, skill:embeddings .
+
+# Software Engineering Jobs
+job:stripe-swe-1
+    a sm:JobPosting ;
+    sm:jobTitle "Software Engineer, Backend" ;
+    sm:jobDescription "Build scalable payment infrastructure. Work on distributed systems processing millions of transactions." ;
+    sm:location "San Francisco, CA" ;
+    sm:postedBy org:stripe ;
+    sm:datePosted "2024-01-20"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:javascript, skill:typescript ;
+    sm:requiresSkill skill:sql, skill:postgresql ;
+    sm:requiresSkill skill:rest-apis, skill:microservices ;
+    sm:requiresSkill skill:docker, skill:kubernetes, skill:git ;
+    sm:requiresSkill skill:aws ;
+    sm:prefersSkill skill:react, skill:graphql .
+
+job:airbnb-swe-1
+    a sm:JobPosting ;
+    sm:jobTitle "Senior Software Engineer, Frontend" ;
+    sm:jobDescription "Build beautiful user experiences for millions of travelers. Work on React applications at scale." ;
+    sm:location "San Francisco, CA" ;
+    sm:postedBy org:airbnb ;
+    sm:datePosted "2024-01-22"^^xsd:date ;
+    sm:requiresSkill skill:javascript, skill:typescript, skill:react ;
+    sm:requiresSkill skill:html, skill:css ;
+    sm:requiresSkill skill:git, skill:rest-apis ;
+    sm:prefersSkill skill:graphql, skill:webpack, skill:jest .
+
+job:microsoft-swe-1
+    a sm:JobPosting ;
+    sm:jobTitle "Software Engineer II" ;
+    sm:jobDescription "Join our cloud platform team building Azure services used by millions of developers worldwide." ;
+    sm:location "Redmond, WA" ;
+    sm:postedBy org:microsoft ;
+    sm:datePosted "2024-01-18"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:javascript, skill:typescript ;
+    sm:requiresSkill skill:sql, skill:azure ;
+    sm:requiresSkill skill:docker, skill:kubernetes ;
+    sm:requiresSkill skill:git, skill:ci-cd ;
+    sm:prefersSkill skill:microservices, skill:rest-apis .
+
+job:amazon-swe-1
+    a sm:JobPosting ;
+    sm:jobTitle "Software Development Engineer" ;
+    sm:jobDescription "Design and build distributed systems at Amazon scale. Work on customer-facing products." ;
+    sm:location "Seattle, WA" ;
+    sm:postedBy org:amazon ;
+    sm:datePosted "2024-01-24"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:javascript ;
+    sm:requiresSkill skill:sql, skill:aws ;
+    sm:requiresSkill skill:docker, skill:kubernetes ;
+    sm:requiresSkill skill:microservices, skill:rest-apis ;
+    sm:requiresSkill skill:git, skill:ci-cd ;
+    sm:prefersSkill skill:react, skill:graphql .
+
+job:google-swe-1
+    a sm:JobPosting ;
+    sm:jobTitle "Software Engineer, Full Stack" ;
+    sm:jobDescription "Build products used by billions. Work on both frontend and backend systems." ;
+    sm:location "Mountain View, CA" ;
+    sm:postedBy org:google ;
+    sm:datePosted "2024-01-19"^^xsd:date ;
+    sm:requiresSkill skill:python, skill:javascript, skill:typescript ;
+    sm:requiresSkill skill:react, skill:angular ;
+    sm:requiresSkill skill:sql, skill:gcp ;
+    sm:requiresSkill skill:docker, skill:kubernetes ;
+    sm:requiresSkill skill:git, skill:ci-cd ;
+    sm:prefersSkill skill:graphql, skill:microservices .
+
+# -----------------------------------------------------------------------------
+# SAMPLE PEOPLE (Candidates)
+# -----------------------------------------------------------------------------
+person:candidate-1
+    a sm:Person ;
+    sm:personName "Alice Chen" ;
+    sm:email "alice.chen@example.com" ;
+    sm:hasSkill skill:python, skill:sql, skill:pandas, skill:numpy ;
+    sm:hasSkill skill:machine-learning, skill:scikit-learn ;
+    sm:hasSkill skill:statistics, skill:hypothesis-testing ;
+    sm:hasSkill skill:data-visualization, skill:matplotlib ;
+    sm:hasSkill skill:git .
+
+person:candidate-2
+    a sm:Person ;
+    sm:personName "Bob Smith" ;
+    sm:email "bob.smith@example.com" ;
+    sm:hasSkill skill:python, skill:pytorch, skill:tensorflow ;
+    sm:hasSkill skill:deep-learning, skill:machine-learning ;
+    sm:hasSkill skill:nlp, skill:llms, skill:transformers ;
+    sm:hasSkill skill:docker, skill:kubernetes ;
+    sm:hasSkill skill:aws, skill:mlops .
+
+person:candidate-3
+    a sm:Person ;
+    sm:personName "Carol Johnson" ;
+    sm:email "carol.j@example.com" ;
+    sm:hasSkill skill:python, skill:r, skill:sql ;
+    sm:hasSkill skill:statistics, skill:bayesian-statistics ;
+    sm:hasSkill skill:a-b-testing, skill:causal-inference ;
+    sm:hasSkill skill:experimental-design ;
+    sm:hasSkill skill:tableau, skill:data-visualization .
+
+# -----------------------------------------------------------------------------
+# MATCH EXAMPLES (computed relationships)
+# -----------------------------------------------------------------------------
+person:candidate-1
+    sm:matchedWith job:adobe-ds-1 ;
+    sm:matchScore "78"^^xsd:decimal .
+
+person:candidate-1
+    sm:matchedWith job:healthleap-ds-1 ;
+    sm:matchScore "72"^^xsd:decimal .
+
+person:candidate-2
+    sm:matchedWith job:google-mle-1 ;
+    sm:matchScore "85"^^xsd:decimal .
+
+person:candidate-2
+    sm:matchedWith job:netflix-mle-1 ;
+    sm:matchScore "82"^^xsd:decimal .
+
+person:candidate-3
+    sm:matchedWith job:meta-ds-1 ;
+    sm:matchScore "88"^^xsd:decimal .
+
