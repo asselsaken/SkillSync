@@ -1,22 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import pdfParse from 'pdf-parse'
-import { neo4jStore } from '../../../lib/rdf/neo4j-store'
+import { getGraphStore } from '../../../lib/rdf/graph-store'
 import { semanticMatcher } from '../../../lib/rdf/semantic-matcher'
-import { SkillMatchDetail } from '../../../lib/rdf/types'
+import { MATCH_TYPE_WEIGHTS } from '../../../lib/rdf/types'
 
-interface MatchedJob {
-  id: string
-  title: string
-  company: string
-  location: string
-  skills: string[]
-  description: string
-  url?: string
-  matchScore: number
-  summary: string
-  reasons: string[]
-  matchedSkills: SkillMatchDetail[]
-}
+export const runtime = 'nodejs'
 
 const MIN_SCORE = 50
 const MAX_RESULTS = 10
@@ -47,9 +35,9 @@ export async function POST(request: NextRequest) {
     const { error: fileError } = validateFile(file || null)
     if (fileError) return NextResponse.json({ error: fileError }, { status: 400 })
 
-    // Neo4j is required; initialization ensures ontology and SHACL are loaded.
-    await neo4jStore.initialize()
-    
+    // Loads the ontology (SHACL-validated) on first use: in-memory or Neo4j.
+    const store = await getGraphStore()
+
     const resumeText = await parseResume(file)
 
     // Extract skills via ontology names/aliases with word-boundary matching.
@@ -77,22 +65,17 @@ export async function POST(request: NextRequest) {
       .filter(match => match.matchScore >= MIN_SCORE)
       .slice(0, MAX_RESULTS)
     
-    const skillNames = resolveSkillNames(await neo4jStore.getAllSkills(), extractedSkillIds)
+    const skillNames = resolveSkillNames(await store.getAllSkills(), extractedSkillIds)
     
     return NextResponse.json({ 
       matches: topMatches,
       extractedSkillCount: extractedSkillIds.length,
       extractedSkills: skillNames,
       semanticMatching: {
-        method: 'RDF/OWL Ontology with SPARQL',
-        matchTypes: ['exact', 'equivalent', 'narrower', 'similar', 'broader'],
-        weights: {
-          exact: 1.0,
-          equivalent: 1.0,
-          narrower: 0.85,
-          similar: 0.6,
-          broader: 0.5
-        }
+        method: 'RDF/OWL skill graph',
+        backend: store.backend,
+        matchTypes: Object.keys(MATCH_TYPE_WEIGHTS),
+        weights: MATCH_TYPE_WEIGHTS,
       }
     })
   } catch (error) {

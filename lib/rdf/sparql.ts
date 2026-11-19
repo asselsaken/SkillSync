@@ -1,12 +1,13 @@
 /**
  * SPARQL Query Engine for SkillMatch
- * 
- * Provides SPARQL query capabilities using Neo4j (n10s)
- * Fallback to N3 store is disabled
+ *
+ * Named SPARQL queries over the skill graph. Runs on the active GraphStore
+ * (in-memory Oxigraph by default, Neo4j + n10s when NEO4J_URI is set).
  */
 
-import { neo4jStore } from './neo4j-store'
-import { PREFIXES, SPARQL_PREFIXES, RDFSkill, RDFJobPosting, SemanticMatch, SkillMatchDetail } from './types'
+import { getGraphStore, SparqlRow } from './graph-store'
+import { semanticMatcher } from './semantic-matcher'
+import { RDFJobPosting, RDFSkill, SemanticMatch, SPARQL_PREFIXES } from './types'
 
 /**
  * Common SPARQL queries for the SkillMatch ontology
@@ -174,53 +175,22 @@ export const SPARQL_QUERIES = {
 
 /**
  * SPARQL Query Engine
- * 
- * Uses Neo4j with neosemantics plugin for real SPARQL queries.
- * Fallback is disabled.
  */
 class SPARQLEngine {
-  /**
-   * Initialize and require Neo4j
-   */
-  private async initialize(): Promise<void> {
-    const neo4jUri = process.env.NEO4J_URI
-    if (!neo4jUri) {
-      throw new Error('NEO4J_URI is not set. Neo4j is required (fallback disabled).')
-    }
-
-    await neo4jStore.initialize()
+  /** Run a raw read-only SPARQL query against the graph. */
+  async executeSPARQL(sparqlQuery: string): Promise<SparqlRow[]> {
+    const store = await getGraphStore()
+    return store.executeSPARQL(sparqlQuery)
   }
 
-  /**
-   * Execute a SPARQL query (real SPARQL if Neo4j, simulated if N3)
-   */
-  async executeSPARQL(sparqlQuery: string): Promise<any[]> {
-    await this.initialize()
-    
-    return await neo4jStore.executeSPARQL(sparqlQuery)
-  }
-
-  /**
-   * Get all skills with their semantic relationships using SPARQL
-   */
   async queryAllSkills(): Promise<RDFSkill[]> {
-    await this.initialize()
-    
-    return await neo4jStore.getAllSkills()
+    return (await getGraphStore()).getAllSkills()
   }
 
-  /**
-   * Get all job postings using SPARQL
-   */
   async queryAllJobs(): Promise<RDFJobPosting[]> {
-    await this.initialize()
-    
-    return await neo4jStore.getAllJobPostings()
+    return (await getGraphStore()).getAllJobPostings()
   }
 
-  /**
-   * Find skills related to a given skill using SPARQL
-   */
   async queryRelatedSkills(skillId: string): Promise<{
     skill: RDFSkill | undefined
     equivalent: RDFSkill[]
@@ -228,187 +198,74 @@ class SPARQLEngine {
     narrower: RDFSkill[]
     similar: RDFSkill[]
   }> {
-    await this.initialize()
+    const store = await getGraphStore()
+    const skill = await store.getSkill(skillId)
+    if (!skill) return { skill: undefined, equivalent: [], broader: [], narrower: [], similar: [] }
 
-    const skill = await neo4jStore.getSkill(skillId)
-    if (!skill) {
-      return { skill: undefined, equivalent: [], broader: [], narrower: [], similar: [] }
-    }
-
-    const allSkills = await neo4jStore.getAllSkills()
-    const skillMap = new Map(allSkills.map(s => [s.id, s]))
+    const skillMap = new Map((await store.getAllSkills()).map((s) => [s.id, s]))
+    const resolve = (ids: string[]) => ids.map((id) => skillMap.get(id)).filter((s): s is RDFSkill => !!s)
 
     return {
       skill,
-      equivalent: skill.equivalentSkills.map(id => skillMap.get(id)).filter(Boolean) as RDFSkill[],
-      broader: skill.broaderSkills.map(id => skillMap.get(id)).filter(Boolean) as RDFSkill[],
-      narrower: skill.narrowerSkills.map(id => skillMap.get(id)).filter(Boolean) as RDFSkill[],
-      similar: skill.similarSkills.map(id => skillMap.get(id)).filter(Boolean) as RDFSkill[],
+      equivalent: resolve(skill.equivalentSkills),
+      broader: resolve(skill.broaderSkills),
+      narrower: resolve(skill.narrowerSkills),
+      similar: resolve(skill.similarSkills),
     }
   }
 
-  /**
-   * Match a person's skills against jobs using SPARQL semantic reasoning
-   */
   async matchPersonToJobs(personSkillIds: string[]): Promise<SemanticMatch[]> {
-    await this.initialize()
-    
-    // Use SPARQL query for matching (Neo4j only)
-    const sparqlResults = await neo4jStore.matchPersonToJobs(personSkillIds)
-    const jobs = await neo4jStore.getAllJobPostings()
-    const jobMap = new Map(jobs.map(job => [job.uri, job]))
-    
-    // Group by job
-    const jobMatches = new Map<string, {
-      job: RDFJobPosting
-      matchedSkills: SkillMatchDetail[]
-    }>()
-    
-    for (const result of sparqlResults) {
-      const jobUri = result.job?.value || result.job
-      const matchType = result.matchType?.value || result.matchType
-      const personSkillUri = result.personSkill?.value || result.personSkill
-      const jobSkillUri = result.jobSkill?.value || result.jobSkill
-      
-      if (!jobMatches.has(jobUri)) {
-        const job = jobMap.get(jobUri)
-        if (job) {
-          jobMatches.set(jobUri, { job, matchedSkills: [] })
-        }
-      }
-      
-      const jobMatch = jobMatches.get(jobUri)
-      if (jobMatch) {
-        const weights: Record<string, number> = {
-          exact: 1.0,
-          equivalent: 1.0,
-          narrower: 0.85,
-          broader: 0.5,
-          similar: 0.6
-        }
-        
-        // Get skill names
-        const personSkill = await neo4jStore.getSkill(personSkillUri.replace(PREFIXES.skill, ''))
-        const jobSkill = await neo4jStore.getSkill(jobSkillUri.replace(PREFIXES.skill, ''))
-        
-        if (personSkill && jobSkill) {
-          jobMatch.matchedSkills.push({
-            personSkillUri,
-            personSkillName: personSkill.name,
-            jobSkillUri,
-            jobSkillName: jobSkill.name,
-            matchType: matchType as SkillMatchDetail['matchType'],
-            weight: weights[matchType] || 0
-          })
-        }
-      }
-    }
-    
-    // Convert to SemanticMatch format
-    const matches: SemanticMatch[] = []
-    for (const [jobUri, { job, matchedSkills }] of jobMatches) {
-      // Keep only the best match per required skill
-      const bestByJobSkill = new Map<string, SkillMatchDetail>()
-      for (const m of matchedSkills) {
-        const jobSkillId = m.jobSkillUri.replace(PREFIXES.skill, '')
-        const current = bestByJobSkill.get(jobSkillId)
-        if (!current || m.weight > current.weight) {
-          bestByJobSkill.set(jobSkillId, m)
-        }
-      }
-
-      const dedupedMatches = Array.from(bestByJobSkill.values())
-
-      const totalRequired = job.requiredSkills.length
-      const weightedSum = dedupedMatches.reduce((sum, m) => sum + m.weight, 0)
-      const score = totalRequired > 0 
-        ? Math.min(100, Math.round((weightedSum / totalRequired) * 100))
-        : 0
-      
-      matches.push({
-        personUri: '',
-        jobUri: job.uri,
-        score,
-        matchedSkills: dedupedMatches,
-        totalRequiredSkills: totalRequired,
-        totalMatchedSkills: dedupedMatches.length,
-      })
-    }
-    
-    matches.sort((a, b) => b.score - a.score)
-    return matches
+    const matches = await semanticMatcher.matchToAllJobs(personSkillIds)
+    return matches.map((m) => ({
+      personUri: '',
+      jobUri: m.id,
+      score: m.matchScore,
+      matchedSkills: m.matchedSkills,
+      totalRequiredSkills: m.skills.length,
+      totalMatchedSkills: m.matchedSkills.length,
+    }))
   }
 
-  /**
-   * Find jobs that require a specific skill or related skills using SPARQL
-   */
   async queryJobsBySkill(skillName: string): Promise<{
     job: RDFJobPosting
-    matchType: 'exact' | 'broader' | 'narrower' | 'similar'
+    matchType: string
   }[]> {
-    await this.initialize()
-    
-    const skill = await neo4jStore.getSkill(skillName)
+    const store = await getGraphStore()
+    const skill = await store.getSkill(skillName)
     if (!skill) return []
 
-    const jobs = await neo4jStore.getAllJobPostings()
-    const matches: {
-      job: RDFJobPosting
-      matchType: 'exact' | 'broader' | 'narrower' | 'similar'
-      weight: number
-    }[] = []
-
-    for (const job of jobs) {
+    const results: { job: RDFJobPosting; matchType: string; weight: number }[] = []
+    for (const job of await store.getAllJobPostings()) {
+      let best: { matchType: string; weight: number } | null = null
       for (const requiredSkillId of job.requiredSkills) {
-        const relation = await neo4jStore.areSkillsRelated(skill.id, requiredSkillId)
-        if (relation.related) {
-          matches.push({
-            job,
-            matchType: relation.type as 'exact' | 'broader' | 'narrower' | 'similar',
-            weight: relation.weight
-          })
+        const relation = await store.areSkillsRelated(skill.id, requiredSkillId)
+        if (relation.related && (!best || relation.weight > best.weight)) {
+          best = { matchType: relation.type, weight: relation.weight }
         }
       }
+      if (best) results.push({ job, ...best })
     }
 
-    // Prefer strongest relation per job
-    const bestPerJob = new Map<string, { job: RDFJobPosting; matchType: 'exact' | 'broader' | 'narrower' | 'similar'; weight: number }>()
-    for (const m of matches) {
-      const current = bestPerJob.get(m.job.uri)
-      if (!current || m.weight > current.weight) {
-        bestPerJob.set(m.job.uri, m)
-      }
-    }
-
-    return Array.from(bestPerJob.values()).map(({ job, matchType }) => ({ job, matchType }))
+    return results
+      .sort((a, b) => b.weight - a.weight)
+      .map(({ job, matchType }) => ({ job, matchType }))
   }
 
-  /**
-   * Get skill hierarchy for visualization using SPARQL
-   */
   async querySkillHierarchy(): Promise<{ parent: string; child: string; parentName: string; childName: string }[]> {
-    await this.initialize()
-    
-    const skills = await neo4jStore.getAllSkills()
-    const skillMap = new Map(skills.map(s => [s.id, s.name]))
+    const skills = await (await getGraphStore()).getAllSkills()
+    const names = new Map(skills.map((s) => [s.id, s.name]))
 
-    const hierarchy: { parent: string; child: string; parentName: string; childName: string }[] = []
-    for (const skill of skills) {
-      for (const broaderId of skill.broaderSkills) {
-        hierarchy.push({
-          parent: broaderId,
+    return skills
+      .flatMap((skill) =>
+        skill.broaderSkills.map((parent) => ({
+          parent,
           child: skill.id,
-          parentName: skillMap.get(broaderId) || broaderId,
-          childName: skill.name
-        })
-      }
-    }
-
-    // Keep ordering stable
-    hierarchy.sort((a, b) => a.parentName.localeCompare(b.parentName) || a.childName.localeCompare(b.childName))
-    return hierarchy
+          parentName: names.get(parent) ?? parent,
+          childName: skill.name,
+        })),
+      )
+      .sort((a, b) => a.parentName.localeCompare(b.parentName) || a.childName.localeCompare(b.childName))
   }
 }
 
-// Export singleton instance
 export const sparqlEngine = new SPARQLEngine()

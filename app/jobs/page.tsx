@@ -102,7 +102,7 @@ export default function JobsPage() {
           <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
             <span className="text-white dark:text-zinc-950 font-bold text-lg">S</span>
           </div>
-          <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillSync</span>
+          <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillMatch</span>
         </div>
       </header>
 

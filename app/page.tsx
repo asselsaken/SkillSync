@@ -23,6 +23,7 @@ interface Job {
   url?: string
   reasons?: string[]
   matchedSkills?: SkillMatchDetail[]
+  missingSkills?: string[]
 }
 
 interface MatchResponse {
@@ -372,15 +373,11 @@ export default function Home() {
                       </div>
                       
                       {/* Missing Skills */}
-                      {job.skills.length > job.matchedSkills.length && (
+                      {job.missingSkills && job.missingSkills.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-700">
                           <p className="text-xs text-zinc-500 mb-2">Missing skills:</p>
                           <div className="flex flex-wrap gap-1">
-                            {job.skills
-                              .filter(skill => !job.matchedSkills?.some(m => 
-                                m.jobSkillName.toLowerCase() === skill.toLowerCase() ||
-                                m.jobSkillUri.includes(skill.toLowerCase().replace(/\s+/g, '-'))
-                              ))
+                            {job.missingSkills
                               .slice(0, 5)
                               .map((skill, idx) => (
                                 <span

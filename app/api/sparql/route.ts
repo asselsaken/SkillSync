@@ -7,6 +7,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sparqlEngine, SPARQL_QUERIES } from '../../../lib/rdf/sparql'
 import { semanticMatcher } from '../../../lib/rdf/semantic-matcher'
+import { SPARQL_PREFIXES } from '../../../lib/rdf/types'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 type QueryType = 'skills' | 'jobs' | 'related-skills' | 'jobs-by-skill' | 'skill-hierarchy' | 'match' | 'stats'
 
@@ -148,18 +152,38 @@ export async function GET(request: NextRequest) {
   }
 }
 
+const UPDATE_KEYWORDS = /\b(INSERT|DELETE|LOAD|CLEAR|DROP|CREATE|ADD|MOVE|COPY)\b/i
+const MAX_QUERY_LENGTH = 5000
+
 /**
  * POST /api/sparql
- * 
- * Execute a custom SPARQL-like query (limited support)
+ *
+ * Body options:
+ * - { "sparql": "SELECT ..." }  run a raw read-only SPARQL query
+ * - { "query": "ALL_SKILLS" }   run a named query
  */
 export async function POST(request: NextRequest) {
   try {
-    const { query, parameters } = await request.json()
+    const { query, sparql } = await request.json()
+
+    if (typeof sparql === 'string') {
+      if (sparql.length > MAX_QUERY_LENGTH) {
+        return NextResponse.json({ error: 'Query too long' }, { status: 400 })
+      }
+      if (UPDATE_KEYWORDS.test(sparql.replace(/"[^"]*"|'[^']*'/g, ''))) {
+        return NextResponse.json({ error: 'Only read-only queries (SELECT, ASK, CONSTRUCT, DESCRIBE) are allowed' }, { status: 400 })
+      }
+      try {
+        const results = await sparqlEngine.executeSPARQL(SPARQL_PREFIXES + sparql)
+        return NextResponse.json({ sparql, count: results.length, results })
+      } catch (error) {
+        return NextResponse.json({ error: `Invalid SPARQL: ${(error as Error).message}` }, { status: 400 })
+      }
+    }
 
     if (!query) {
       return NextResponse.json(
-        { error: 'Missing query in request body' },
+        { error: 'Missing "sparql" or "query" in request body' },
         { status: 400 }
       )
     }
