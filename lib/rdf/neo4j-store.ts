@@ -12,7 +12,7 @@ import * as path from 'path'
 import * as N3 from 'n3'
 import { PREFIXES, RDFSkill, RDFJobPosting, RDFPerson, RDFOrganization, ValidationResult } from './types'
 import { GraphStore, SkillRelation } from './graph-store'
-import { DATA_FILES, readTurtleFile, validateQuads } from './shacl'
+import { dataFiles, readTurtleFile, validateQuads } from './shacl'
 
 const { DataFactory } = N3
 const { namedNode, literal } = DataFactory
@@ -64,7 +64,7 @@ class Neo4jRDFStore implements GraphStore {
       }
 
       // Validate all data against the SHACL shapes before loading it
-      const quads = DATA_FILES.flatMap((file) => readTurtleFile(file))
+      const quads = dataFiles().flatMap((file) => readTurtleFile(file))
       const report = await validateQuads(quads)
       if (!report.valid) {
         throw new Error(`SHACL validation failed with ${report.violations.length} violations`)
@@ -122,11 +122,7 @@ class Neo4jRDFStore implements GraphStore {
    */
   private async loadRDFData(session: Session): Promise<void> {
     const ontologyDir = path.join(process.cwd(), 'ontology')
-    const files = [
-      'skillmatch.owl.ttl',
-      'skills.rdf.ttl',
-      'sample-data.rdf.ttl'
-    ]
+    const files = dataFiles(ontologyDir)
 
     for (const file of files) {
       const filePath = path.join(ontologyDir, file)

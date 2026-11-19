@@ -55,3 +55,19 @@ describe('extractSkillIds', () => {
     expect(extractSkillIds('Great communicator and team player', skills)).toEqual([])
   })
 })
+
+describe('extractSkillIds overlap and equivalence', () => {
+  const ab = { ...skill('a-b-testing', 'A/B Testing', ['ab testing']) }
+  const testing = skill('testing', 'Testing', ['unit testing'])
+  const llms = { ...skill('llms', 'LLMs', ['large language models']), equivalentSkills: ['large-language-models'] }
+  const lllm = { ...skill('large-language-models', 'Large Language Models'), equivalentSkills: ['llms'] }
+
+  it('prefers the longest overlapping match', () => {
+    expect(extractSkillIds('Ran A/B testing at scale', [ab, testing])).toEqual(['a-b-testing'])
+    expect(extractSkillIds('A/B testing and unit testing', [ab, testing]).sort()).toEqual(['a-b-testing', 'testing'])
+  })
+
+  it('keeps one skill per equivalence pair', () => {
+    expect(extractSkillIds('LLMs, i.e. large language models', [llms, lllm])).toEqual(['llms'])
+  })
+})

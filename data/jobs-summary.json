@@ -1,0 +1,542 @@
+{
+  "fetchedAt": "2026-11-19T03:22:22.309Z",
+  "jobs": 5338,
+  "companies": [
+    {
+      "slug": "affirm",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 221,
+      "relevant": 134,
+      "kept": 132
+    },
+    {
+      "slug": "airbnb",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 197,
+      "relevant": 59,
+      "kept": 57
+    },
+    {
+      "slug": "airtable",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 11,
+      "relevant": 1,
+      "kept": 0
+    },
+    {
+      "slug": "anthropic",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 641,
+      "relevant": 300,
+      "kept": 275
+    },
+    {
+      "slug": "asana",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 115,
+      "relevant": 44,
+      "kept": 41
+    },
+    {
+      "slug": "block",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 187,
+      "relevant": 34,
+      "kept": 32
+    },
+    {
+      "slug": "brex",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 260,
+      "relevant": 64,
+      "kept": 56
+    },
+    {
+      "slug": "chime",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 77,
+      "relevant": 28,
+      "kept": 28
+    },
+    {
+      "slug": "clerk",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 2,
+      "relevant": 0,
+      "kept": 0
+    },
+    {
+      "slug": "cloudflare",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 497,
+      "relevant": 237,
+      "kept": 219
+    },
+    {
+      "slug": "cohere",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 125,
+      "relevant": 48,
+      "kept": 48
+    },
+    {
+      "slug": "coinbase",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 255,
+      "relevant": 107,
+      "kept": 107
+    },
+    {
+      "slug": "cursor",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 92,
+      "relevant": 26,
+      "kept": 26
+    },
+    {
+      "slug": "databricks",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 901,
+      "relevant": 508,
+      "kept": 505
+    },
+    {
+      "slug": "datadog",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 381,
+      "relevant": 59,
+      "kept": 56
+    },
+    {
+      "slug": "discord",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 27,
+      "relevant": 13,
+      "kept": 13
+    },
+    {
+      "slug": "dropbox",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 44,
+      "relevant": 23,
+      "kept": 23
+    },
+    {
+      "slug": "duolingo",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 55,
+      "relevant": 18,
+      "kept": 18
+    },
+    {
+      "slug": "elastic",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 375,
+      "relevant": 225,
+      "kept": 203
+    },
+    {
+      "slug": "elevenlabs",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 129,
+      "relevant": 34,
+      "kept": 33
+    },
+    {
+      "slug": "figma",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 143,
+      "relevant": 45,
+      "kept": 42
+    },
+    {
+      "slug": "flexport",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 207,
+      "relevant": 30,
+      "kept": 29
+    },
+    {
+      "slug": "gitlab",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 249,
+      "relevant": 98,
+      "kept": 98
+    },
+    {
+      "slug": "gusto",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 82,
+      "relevant": 25,
+      "kept": 25
+    },
+    {
+      "slug": "harvey",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 392,
+      "relevant": 87,
+      "kept": 83
+    },
+    {
+      "slug": "instacart",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 85,
+      "relevant": 21,
+      "kept": 21
+    },
+    {
+      "slug": "klaviyo",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 130,
+      "relevant": 46,
+      "kept": 46
+    },
+    {
+      "slug": "linear",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 32,
+      "relevant": 10,
+      "kept": 8
+    },
+    {
+      "slug": "lyft",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 149,
+      "relevant": 69,
+      "kept": 69
+    },
+    {
+      "slug": "modal",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 51,
+      "relevant": 19,
+      "kept": 18
+    },
+    {
+      "slug": "mongodb",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 403,
+      "relevant": 156,
+      "kept": 156
+    },
+    {
+      "slug": "notion",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 168,
+      "relevant": 47,
+      "kept": 32
+    },
+    {
+      "slug": "nuro",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 103,
+      "relevant": 76,
+      "kept": 74
+    },
+    {
+      "slug": "okta",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 363,
+      "relevant": 181,
+      "kept": 180
+    },
+    {
+      "slug": "openai",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 833,
+      "relevant": 446,
+      "kept": 408
+    },
+    {
+      "slug": "outreach",
+      "board": "lever",
+      "ok": true,
+      "fetched": 14,
+      "relevant": 6,
+      "kept": 6
+    },
+    {
+      "slug": "palantir",
+      "board": "lever",
+      "ok": true,
+      "fetched": 306,
+      "relevant": 187,
+      "kept": 186
+    },
+    {
+      "slug": "peloton",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 37,
+      "relevant": 15,
+      "kept": 12
+    },
+    {
+      "slug": "perplexity",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 147,
+      "relevant": 64,
+      "kept": 62
+    },
+    {
+      "slug": "pinterest",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 172,
+      "relevant": 79,
+      "kept": 77
+    },
+    {
+      "slug": "plaid",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 141,
+      "relevant": 48,
+      "kept": 46
+    },
+    {
+      "slug": "posthog",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 9,
+      "relevant": 3,
+      "kept": 3
+    },
+    {
+      "slug": "ramp",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 182,
+      "relevant": 45,
+      "kept": 44
+    },
+    {
+      "slug": "reddit",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 148,
+      "relevant": 90,
+      "kept": 90
+    },
+    {
+      "slug": "replit",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 36,
+      "relevant": 22,
+      "kept": 22
+    },
+    {
+      "slug": "ro",
+      "board": "lever",
+      "ok": true,
+      "fetched": 54,
+      "relevant": 17,
+      "kept": 17
+    },
+    {
+      "slug": "robinhood",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 164,
+      "relevant": 64,
+      "kept": 64
+    },
+    {
+      "slug": "roblox",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 265,
+      "relevant": 193,
+      "kept": 168
+    },
+    {
+      "slug": "runway",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 3,
+      "relevant": 3,
+      "kept": 2
+    },
+    {
+      "slug": "samsara",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 310,
+      "relevant": 77,
+      "kept": 72
+    },
+    {
+      "slug": "scaleai",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 167,
+      "relevant": 84,
+      "kept": 83
+    },
+    {
+      "slug": "sierra",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 195,
+      "relevant": 58,
+      "kept": 56
+    },
+    {
+      "slug": "snowflake",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 377,
+      "relevant": 207,
+      "kept": 201
+    },
+    {
+      "slug": "sofi",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 53,
+      "relevant": 18,
+      "kept": 17
+    },
+    {
+      "slug": "spotify",
+      "board": "lever",
+      "ok": true,
+      "fetched": 91,
+      "relevant": 38,
+      "kept": 35
+    },
+    {
+      "slug": "squarespace",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 19,
+      "relevant": 9,
+      "kept": 8
+    },
+    {
+      "slug": "stripe",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 784,
+      "relevant": 234,
+      "kept": 218
+    },
+    {
+      "slug": "supabase",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 76,
+      "relevant": 47,
+      "kept": 47
+    },
+    {
+      "slug": "toast",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 326,
+      "relevant": 73,
+      "kept": 71
+    },
+    {
+      "slug": "twilio",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 108,
+      "relevant": 35,
+      "kept": 34
+    },
+    {
+      "slug": "twitch",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 52,
+      "relevant": 22,
+      "kept": 22
+    },
+    {
+      "slug": "vanta",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 73,
+      "relevant": 23,
+      "kept": 21
+    },
+    {
+      "slug": "vercel",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 86,
+      "relevant": 31,
+      "kept": 28
+    },
+    {
+      "slug": "verkada",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 346,
+      "relevant": 133,
+      "kept": 123
+    },
+    {
+      "slug": "waymo",
+      "board": "greenhouse",
+      "ok": true,
+      "fetched": 374,
+      "relevant": 207,
+      "kept": 199
+    },
+    {
+      "slug": "zapier",
+      "board": "ashby",
+      "ok": true,
+      "fetched": 10,
+      "relevant": 3,
+      "kept": 3
+    },
+    {
+      "slug": "zoox",
+      "board": "lever",
+      "ok": true,
+      "fetched": 249,
+      "relevant": 150,
+      "kept": 140
+    }
+  ]
+}

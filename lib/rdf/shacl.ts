@@ -16,7 +16,16 @@ import { SPARQL_PREFIXES, ValidationResult, ValidationViolation } from './types'
 
 export const ONTOLOGY_DIR = path.join(process.cwd(), 'ontology')
 export const SHAPES_FILE = 'skillmatch.shacl.ttl'
-export const DATA_FILES = ['skillmatch.owl.ttl', 'skills.rdf.ttl', 'sample-data.rdf.ttl']
+export const ONTOLOGY_FILES = ['skillmatch.owl.ttl', 'skills.rdf.ttl']
+export const JOBS_FILE = 'jobs.rdf.ttl'
+export const SAMPLE_DATA_FILE = 'sample-data.rdf.ttl'
+/** Ontology + hand-written sample jobs (used by tests and when no real jobs were fetched). */
+export const SAMPLE_FILES = [...ONTOLOGY_FILES, SAMPLE_DATA_FILE]
+
+/** Files to load: real jobs from `npm run fetch-jobs` if present, otherwise the sample data. */
+export function dataFiles(dir: string = ONTOLOGY_DIR): string[] {
+  return fs.existsSync(path.join(dir, JOBS_FILE)) ? [...ONTOLOGY_FILES, JOBS_FILE] : SAMPLE_FILES
+}
 
 const SH = 'http://www.w3.org/ns/shacl#'
 const { namedNode } = N3.DataFactory

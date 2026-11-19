@@ -3,11 +3,11 @@ import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
 import { MemoryGraphStore } from '../lib/rdf/store'
-import { DATA_FILES, ONTOLOGY_DIR, parseTurtle, readTurtleFile, validateQuads } from '../lib/rdf/shacl'
+import { ONTOLOGY_DIR, parseTurtle, readTurtleFile, SAMPLE_FILES, validateQuads } from '../lib/rdf/shacl'
 import { SPARQL_QUERIES } from '../lib/rdf/sparql'
 import { extractSkillIds, scoreJob } from '../lib/rdf/semantic-matcher'
 
-const store = new MemoryGraphStore()
+const store = new MemoryGraphStore(ONTOLOGY_DIR, SAMPLE_FILES)
 beforeAll(() => store.initialize())
 
 const PREFIXES = `
@@ -20,7 +20,7 @@ const PREFIXES = `
 
 describe('SHACL validation', () => {
   it('accepts the bundled ontology and data', async () => {
-    const report = await validateQuads(DATA_FILES.flatMap((f) => readTurtleFile(f)))
+    const report = await validateQuads(SAMPLE_FILES.flatMap((f) => readTurtleFile(f)))
     expect(report.violations).toEqual([])
     expect(report.valid).toBe(true)
   })

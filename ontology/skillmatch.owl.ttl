@@ -236,6 +236,39 @@ sm:datePosted
     rdfs:domain sm:JobPosting ;
     rdfs:range xsd:date .
 
+sm:applyUrl
+    a owl:DatatypeProperty ;
+    rdfs:label "apply URL"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:anyURI .
+
+sm:isRemote
+    a owl:DatatypeProperty ;
+    rdfs:label "is remote"@en ;
+    rdfs:comment "True if the position can be done fully remotely"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:boolean .
+
+sm:department
+    a owl:DatatypeProperty ;
+    rdfs:label "department"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:employmentType
+    a owl:DatatypeProperty ;
+    rdfs:label "employment type"@en ;
+    rdfs:comment "e.g. Full-time, Part-time, Contract, Internship"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:jobSource
+    a owl:DatatypeProperty ;
+    rdfs:label "job source"@en ;
+    rdfs:comment "Job board the posting was collected from (greenhouse, lever, ashby)"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
 # -----------------------------------------------------------------------------
 # Skill properties
 # -----------------------------------------------------------------------------

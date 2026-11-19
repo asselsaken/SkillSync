@@ -21,6 +21,7 @@ interface Job {
   matchScore?: number
   summary?: string
   url?: string
+  applyUrl?: string
   reasons?: string[]
   matchedSkills?: SkillMatchDetail[]
   missingSkills?: string[]
@@ -414,9 +415,9 @@ export default function Home() {
                       )}
                     </div>
                     
-                    {job.url && (
+                    {(job.applyUrl || job.url) && (
                       <a
-                        href={job.url}
+                        href={job.applyUrl || job.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

@@ -11,7 +11,7 @@
 import * as N3 from 'n3'
 import * as oxigraph from 'oxigraph'
 import { GraphStore, SkillRelation, SparqlRow } from './graph-store'
-import { DATA_FILES, ONTOLOGY_DIR, readTurtleFile, validateQuads } from './shacl'
+import { dataFiles, ONTOLOGY_DIR, readTurtleFile, validateQuads } from './shacl'
 import { MATCH_TYPE_WEIGHTS, PREFIXES, RDFJobPosting, RDFOrganization, RDFPerson, RDFSkill } from './types'
 
 const { namedNode } = N3.DataFactory
@@ -28,10 +28,11 @@ export class MemoryGraphStore implements GraphStore {
   private sparqlStore: oxigraph.Store | null = null
   private initialized = false
   private skillsCache: RDFSkill[] | null = null
+  private jobsCache: RDFJobPosting[] | null = null
 
   constructor(
     private readonly dataDir: string = ONTOLOGY_DIR,
-    private readonly files: string[] = DATA_FILES,
+    private readonly files: string[] = dataFiles(dataDir),
   ) {}
 
   async initialize(): Promise<void> {
@@ -87,6 +88,7 @@ export class MemoryGraphStore implements GraphStore {
           narrowerSkills: this.skillIds(uri, SM + 'narrowerSkill'),
           similarSkills: this.skillIds(uri, SM + 'similarTo'),
           equivalentSkills: this.skillIds(uri, SM + 'equivalentSkill'),
+          isCategory: this.store.has(N3.DataFactory.quad(namedNode(uri), namedNode(PREFIXES.rdf + 'type'), namedNode(SM + 'SkillCategory'))),
         }
       })
     }
@@ -104,8 +106,14 @@ export class MemoryGraphStore implements GraphStore {
   }
 
   async getAllJobPostings(): Promise<RDFJobPosting[]> {
-    return this.subjectsOfType(SM + 'JobPosting').map((uri) => {
+    if (this.jobsCache) return this.jobsCache
+    const orgNames = new Map<string, string>()
+    this.jobsCache = this.subjectsOfType(SM + 'JobPosting').map((uri) => {
       const orgUri = this.value(uri, SM + 'postedBy') ?? ''
+      if (!orgNames.has(orgUri)) {
+        orgNames.set(orgUri, this.value(orgUri, SM + 'organizationName') ?? stripPrefix(orgUri, PREFIXES.org))
+      }
+      const remote = this.value(uri, SM + 'isRemote')
       return {
         id: stripPrefix(uri, PREFIXES.job),
         uri,
@@ -113,12 +121,19 @@ export class MemoryGraphStore implements GraphStore {
         description: this.value(uri, SM + 'jobDescription') ?? '',
         location: this.value(uri, SM + 'location'),
         url: this.value(uri, SM + 'jobUrl'),
-        organization: this.value(orgUri, SM + 'organizationName') ?? stripPrefix(orgUri, PREFIXES.org),
+        organization: orgNames.get(orgUri) ?? '',
         requiredSkills: this.skillIds(uri, SM + 'requiresSkill'),
         preferredSkills: this.skillIds(uri, SM + 'prefersSkill'),
         datePosted: this.value(uri, SM + 'datePosted'),
+        applyUrl: this.value(uri, SM + 'applyUrl'),
+        isRemote: remote === undefined ? undefined : remote === 'true',
+        department: this.value(uri, SM + 'department'),
+        employmentType: this.value(uri, SM + 'employmentType'),
+        salary: this.value(uri, SM + 'salary'),
+        source: this.value(uri, SM + 'jobSource'),
       }
     })
+    return this.jobsCache
   }
 
   async getAllPeople(): Promise<RDFPerson[]> {

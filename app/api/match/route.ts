@@ -7,7 +7,7 @@ import { MATCH_TYPE_WEIGHTS } from '../../../lib/rdf/types'
 export const runtime = 'nodejs'
 
 const MIN_SCORE = 50
-const MAX_RESULTS = 10
+const MAX_RESULTS = 20
 const FIVE_MB = 5 * 1024 * 1024
 
 const validateFile = (file: File | null): { error?: string } => {

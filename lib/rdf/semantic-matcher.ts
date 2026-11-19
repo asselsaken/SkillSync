@@ -19,12 +19,23 @@ export interface MatchedJob {
   skills: string[]
   description: string
   url?: string
+  applyUrl?: string
+  isRemote?: boolean
   matchScore: number
   summary: string
   reasons: string[]
   matchedSkills: SkillMatchDetail[]
   missingSkills: string[]
+  /** Ranking key: coverage smoothed so jobs with very few detected requirements don't dominate */
+  rankScore: number
 }
+
+/**
+ * Pseudo-requirements added when ranking. A posting where only 1 skill was
+ * detected and matched is weak evidence of fit, so it ranks below a posting
+ * where 8 of 9 requirements are matched (100% → 25, 89% → 67).
+ */
+export const RANKING_PRIOR = 3
 
 type RelateFn = (personSkillId: string, jobSkillId: string) => Promise<SkillRelation>
 
@@ -32,27 +43,76 @@ type RelateFn = (personSkillId: string, jobSkillId: string) => Promise<SkillRela
 
 const escapeRegex = (s: string) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
 
+const patternCache = new Map<string, RegExp>()
+
 /**
- * True if `term` appears in `text` as a standalone token.
+ * Pattern for `term` as a standalone token.
  * Allows + # . / inside a token (C++, C#, Node.js, CI/CD) but not around it,
  * so "R" does not match inside "for" and "Java" does not match "JavaScript".
  * A trailing sentence period is allowed ("...and Python.").
  */
+function termPattern(term: string): RegExp {
+  const key = term.toLowerCase()
+  let pattern = patternCache.get(key)
+  if (!pattern) {
+    pattern = new RegExp(`(^|[^a-z0-9+.#/])${escapeRegex(key)}(?=$|[^a-z0-9+#/]|\\.(?:$|[^a-z0-9]))`, 'g')
+    patternCache.set(key, pattern)
+  }
+  return pattern
+}
+
 export function containsWholeTerm(text: string, term: string): boolean {
   if (!term) return false
-  const pattern = new RegExp(`(^|[^a-z0-9+.#/])${escapeRegex(term.toLowerCase())}(?=$|[^a-z0-9+#/]|\\.(?:$|[^a-z0-9]))`, 'i')
+  const pattern = termPattern(term)
+  pattern.lastIndex = 0
   return pattern.test(text.toLowerCase())
 }
 
-/** Return the ids of all ontology skills mentioned by name or alias in `text`. */
+interface Span {
+  start: number
+  end: number
+  skill: RDFSkill
+}
+
+/**
+ * Return the ids of ontology skills mentioned by name or alias in `text`.
+ *
+ * - When matches overlap, the longest wins: "A/B testing" yields A/B Testing,
+ *   not also the generic Testing.
+ * - Of skills declared equivalent (e.g. LLMs ≡ Large Language Models) only the
+ *   first mentioned is kept, so one concept is not counted twice.
+ */
 export function extractSkillIds(text: string, skills: RDFSkill[]): string[] {
-  const found = new Set<string>()
+  const lower = text.toLowerCase()
+  const spans: Span[] = []
+
   for (const skill of skills) {
-    if ([skill.name, ...skill.aliases].some((term) => containsWholeTerm(text, term))) {
-      found.add(skill.id)
+    for (const term of new Set([skill.name, ...skill.aliases].map((t) => t.toLowerCase()))) {
+      if (!term || !lower.includes(term)) continue
+      for (const m of lower.matchAll(termPattern(term))) {
+        const start = (m.index ?? 0) + m[1].length
+        spans.push({ start, end: start + term.length, skill })
+      }
     }
   }
-  return Array.from(found)
+
+  // Longest spans first; a span is kept only if it doesn't overlap a kept span of another skill.
+  spans.sort((a, b) => b.end - b.start - (a.end - a.start) || a.start - b.start)
+  const kept: Span[] = []
+  for (const span of spans) {
+    const clash = kept.some((k) => k.skill.id !== span.skill.id && span.start < k.end && k.start < span.end)
+    if (!clash) kept.push(span)
+  }
+
+  // First mention order, collapsing equivalent skills.
+  kept.sort((a, b) => a.start - b.start)
+  const found: RDFSkill[] = []
+  for (const { skill } of kept) {
+    if (found.some((f) => f.id === skill.id)) continue
+    const isEquivalent = found.some((f) => f.equivalentSkills.includes(skill.id) || skill.equivalentSkills.includes(f.id))
+    if (!isEquivalent) found.push(skill)
+  }
+  return found.map((s) => s.id)
 }
 
 // ------------------------------------------------------------------ scoring
@@ -67,7 +127,7 @@ export async function scoreJob(
   personSkillIds: string[],
   skillNames: Map<string, string>,
   relate: RelateFn,
-): Promise<{ score: number; matchedSkills: SkillMatchDetail[]; missingSkills: string[] }> {
+): Promise<{ score: number; rankScore: number; matchedSkills: SkillMatchDetail[]; missingSkills: string[] }> {
   const matchedSkills: SkillMatchDetail[] = []
   const missingSkills: string[] = []
 
@@ -98,8 +158,9 @@ export async function scoreJob(
   const total = job.requiredSkills.length
   const weighted = matchedSkills.reduce((sum, m) => sum + m.weight, 0)
   const score = total > 0 ? Math.min(100, Math.round((weighted / total) * 100)) : 0
+  const rankScore = Math.round((weighted / (total + RANKING_PRIOR)) * 100)
 
-  return { score, matchedSkills, missingSkills }
+  return { score, rankScore, matchedSkills, missingSkills }
 }
 
 export function generateReasons(matchedSkills: SkillMatchDetail[]): string[] {
@@ -154,11 +215,21 @@ class SemanticMatcher {
     const store = await getGraphStore()
     const [skills, jobs] = await Promise.all([store.getAllSkills(), store.getAllJobPostings()])
     const skillNames = new Map(skills.map((s) => [s.id, s.name]))
-    const relate: RelateFn = (p, j) => store.areSkillsRelated(p, j)
+    // Many jobs share requirements, so each (candidate skill, job skill) pair is resolved once.
+    const cache = new Map<string, Promise<SkillRelation>>()
+    const relate: RelateFn = (p, j) => {
+      const key = `${p}|${j}`
+      let relation = cache.get(key)
+      if (!relation) {
+        relation = store.areSkillsRelated(p, j)
+        cache.set(key, relation)
+      }
+      return relation
+    }
 
     const results: MatchedJob[] = []
     for (const job of jobs) {
-      const { score, matchedSkills, missingSkills } = await scoreJob(job, personSkillIds, skillNames, relate)
+      const { score, rankScore, matchedSkills, missingSkills } = await scoreJob(job, personSkillIds, skillNames, relate)
       if (matchedSkills.length === 0) continue
       results.push({
         id: job.id,
@@ -168,15 +239,18 @@ class SemanticMatcher {
         skills: job.requiredSkills.map((id) => skillNames.get(id) ?? id),
         description: job.description,
         url: job.url,
+        applyUrl: job.applyUrl ?? job.url,
+        isRemote: job.isRemote,
         matchScore: score,
         summary: generateSummary(job.description),
         reasons: generateReasons(matchedSkills),
         matchedSkills,
         missingSkills,
+        rankScore,
       })
     }
 
-    return results.sort((a, b) => b.matchScore - a.matchScore)
+    return results.sort((a, b) => b.rankScore - a.rankScore || b.matchScore - a.matchScore)
   }
 
   async getOntologyStats() {
