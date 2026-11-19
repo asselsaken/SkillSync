@@ -21,12 +21,14 @@ const file = process.argv[2] ?? newestBatch()
 const batch: ProposalBatch = JSON.parse(fs.readFileSync(file, 'utf-8'))
 const summary = fs.existsSync('data/jobs-summary.json') ? JSON.parse(fs.readFileSync('data/jobs-summary.json', 'utf-8')) : null
 
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
+
 const lines: string[] = []
 lines.push(`Automated skill-graph review from \`${path.basename(file)}\` (reviewer: ${batch.reviewer}).`)
 lines.push('')
 lines.push(
-  `**${batch.newSkills.length} new skills**, ${(batch.newAliases ?? []).length} alias updates, ` +
-    `${(batch.rejected ?? []).length} terms rejected. All changes passed the proposal checks and SHACL validation, ` +
+  `**${plural(batch.newSkills.length, 'new skill')}**, ${plural((batch.newAliases ?? []).length, 'alias update')}, ` +
+    `${plural((batch.rejected ?? []).length, 'term')} rejected. All changes passed the proposal checks and SHACL validation, ` +
     `and jobs were re-tagged${summary ? ` (${summary.jobs} postings)` : ''}.`,
 )
 
