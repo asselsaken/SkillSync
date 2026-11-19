@@ -71,3 +71,43 @@ describe('extractSkillIds overlap and equivalence', () => {
     expect(extractSkillIds('LLMs, i.e. large language models', [llms, lllm])).toEqual(['llms'])
   })
 })
+
+describe('case-sensitive skills', () => {
+  const go = { ...skill('go', 'Go', ['golang']), caseSensitive: true }
+
+  it('matches the exact name and aliases', () => {
+    expect(extractSkillIds('Backend services in Go and Python', [go])).toEqual(['go'])
+    expect(extractSkillIds('Experience with golang', [go])).toEqual(['go'])
+  })
+
+  it('ignores the ordinary word and hyphenated phrases', () => {
+    expect(extractSkillIds('ready to go, on the go', [go])).toEqual([])
+    expect(extractSkillIds('Go-to-market strategy', [go])).toEqual([])
+    expect(extractSkillIds('GO TEAM', [go])).toEqual([])
+  })
+})
+
+describe('slash-separated skills', () => {
+  const js = skill('javascript', 'JavaScript')
+  const ts = skill('typescript', 'TypeScript')
+  const cicd = skill('ci-cd', 'CI/CD')
+  const ab = skill('a-b-testing', 'A/B Testing')
+  const testing = skill('testing', 'Testing')
+
+  it('splits "A/B" pairs of skills', () => {
+    expect(extractSkillIds('Strong JavaScript/TypeScript skills', [js, ts]).sort()).toEqual(['javascript', 'typescript'])
+  })
+
+  it('keeps slash terms whole', () => {
+    expect(extractSkillIds('CI/CD pipelines', [cicd])).toEqual(['ci-cd'])
+    expect(extractSkillIds('ran A/B testing', [ab, testing])).toEqual(['a-b-testing'])
+  })
+})
+
+describe('partially overlapping matches', () => {
+  it('keeps both skills when matches share a word', () => {
+    const stream = skill('stream-processing', 'Stream Processing', ['streaming data'])
+    const pipes = skill('data-pipelines', 'Data Pipelines')
+    expect(extractSkillIds('Built streaming data pipelines', [stream, pipes]).sort()).toEqual(['data-pipelines', 'stream-processing'])
+  })
+})

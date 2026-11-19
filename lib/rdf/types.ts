@@ -42,6 +42,8 @@ export interface RDFSkill {
   equivalentSkills: string[]
   /** Broad grouping (sm:SkillCategory) such as "Databases" rather than a concrete skill */
   isCategory?: boolean
+  /** Name only matches with exact capitalisation ("Go", not the verb "go"); aliases are unaffected */
+  caseSensitive?: boolean
 }
 
 // Person entity from RDF

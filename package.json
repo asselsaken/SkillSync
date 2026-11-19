@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "fetch-jobs": "tsx scripts/fetch-jobs.ts"
+    "fetch-jobs": "tsx scripts/fetch-jobs.ts",
+    "graph:candidates": "tsx scripts/find-skill-candidates.ts",
+    "graph:apply": "tsx scripts/apply-skill-proposals.ts"
   },
   "dependencies": {
     "@rdfjs/data-model": "^2.1.1",

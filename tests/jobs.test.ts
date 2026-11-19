@@ -116,3 +116,16 @@ describe('skill tagging and RDF output', () => {
     expect(report.violations).toEqual([])
   })
 })
+
+describe('employer self-mentions', () => {
+  it("doesn't tag a company's own product as a requirement of its postings", () => {
+    const databricks: Company = { name: 'Databricks', board: 'greenhouse', slug: 'databricks' }
+    const [job] = normalizeGreenhouse(databricks, {
+      jobs: [{ id: 9, title: 'Software Engineer', absolute_url: 'https://example.com/9',
+        content: 'Requirements\n• Build Databricks features in Scala, Python and Spark for our customers' }],
+    })
+    const tagged = tagSkills(job, skills)
+    expect(tagged.requiredSkills).not.toContain('databricks')
+    expect(tagged.requiredSkills).toEqual(expect.arrayContaining(['python', 'spark']))
+  })
+})

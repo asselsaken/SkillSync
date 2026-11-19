@@ -20,12 +20,15 @@ const LOCATION_MAX_LENGTH = 200
 /**
  * Tag a job with ontology skills. Skills found in "nice to have" sections are
  * preferred; skills in the rest of the posting are required. Benefits and
- * company boilerplate are ignored, and so are broad skill categories.
+ * company boilerplate are ignored, and so are broad skill categories and the
+ * employer's own product name.
  */
 export function tagSkills(job: NormalizedJob, allSkills: RDFSkill[]): EnrichedJob {
   // Categories ("Artificial Intelligence", "Databases") appear in almost every posting's
   // boilerplate. Concrete skills already reach their category through the graph.
-  const skills = allSkills.filter((s) => !s.isCategory)
+  // A company's own product name in its own postings ("Datadog" at Datadog) is not a requirement.
+  const company = job.company.name.toLowerCase()
+  const skills = allSkills.filter((s) => !s.isCategory && !company.startsWith(s.name.toLowerCase()))
   const { required, preferred } = splitSections(job.description)
   const requiredSkills = extractSkillIds(`${job.title}\n${required}`, skills)
   const requiredSet = new Set(requiredSkills)

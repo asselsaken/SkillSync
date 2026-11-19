@@ -47,15 +47,31 @@ const patternCache = new Map<string, RegExp>()
 
 /**
  * Pattern for `term` as a standalone token.
- * Allows + # . / inside a token (C++, C#, Node.js, CI/CD) but not around it,
- * so "R" does not match inside "for" and "Java" does not match "JavaScript".
+ * Allows + # . inside a token (C++, C#, Node.js) but not around it, so "R"
+ * does not match inside "for" and "Java" does not match "JavaScript".
+ * "/" separates tokens ("Python/R", "JavaScript/TypeScript"); slash terms
+ * such as "CI/CD" still win because the longest overlapping match is kept.
  * A trailing sentence period is allowed ("...and Python.").
  */
 function termPattern(term: string): RegExp {
   const key = term.toLowerCase()
   let pattern = patternCache.get(key)
   if (!pattern) {
-    pattern = new RegExp(`(^|[^a-z0-9+.#/])${escapeRegex(key)}(?=$|[^a-z0-9+#/]|\\.(?:$|[^a-z0-9]))`, 'g')
+    pattern = new RegExp(`(^|[^a-z0-9+.#])${escapeRegex(key)}(?=$|[^a-z0-9+#]|\\.(?:$|[^a-z0-9]))`, 'g')
+    patternCache.set(key, pattern)
+  }
+  return pattern
+}
+
+/**
+ * Exact-case pattern for ambiguous names such as "Go". Also refuses a following
+ * hyphen, so "Go-to-market" is not read as the Go language.
+ */
+function caseSensitivePattern(term: string): RegExp {
+  const key = `cs:${term}`
+  let pattern = patternCache.get(key)
+  if (!pattern) {
+    pattern = new RegExp(`(^|[^A-Za-z0-9+.#])${escapeRegex(term)}(?=$|[^A-Za-z0-9+#-]|\\.(?:$|[^A-Za-z0-9]))`, 'g')
     patternCache.set(key, pattern)
   }
   return pattern
@@ -77,8 +93,8 @@ interface Span {
 /**
  * Return the ids of ontology skills mentioned by name or alias in `text`.
  *
- * - When matches overlap, the longest wins: "A/B testing" yields A/B Testing,
- *   not also the generic Testing.
+ * - A match inside a longer match is dropped: "A/B testing" yields A/B Testing,
+ *   not also the generic Testing. Partially overlapping matches both count.
  * - Of skills declared equivalent (e.g. LLMs ≡ Large Language Models) only the
  *   first mentioned is kept, so one concept is not counted twice.
  */
@@ -86,22 +102,31 @@ export function extractSkillIds(text: string, skills: RDFSkill[]): string[] {
   const lower = text.toLowerCase()
   const spans: Span[] = []
 
-  for (const skill of skills) {
-    for (const term of new Set([skill.name, ...skill.aliases].map((t) => t.toLowerCase()))) {
-      if (!term || !lower.includes(term)) continue
-      for (const m of lower.matchAll(termPattern(term))) {
-        const start = (m.index ?? 0) + m[1].length
-        spans.push({ start, end: start + term.length, skill })
-      }
+  const addMatches = (source: string, term: string, pattern: RegExp, skill: RDFSkill) => {
+    for (const m of source.matchAll(pattern)) {
+      const start = (m.index ?? 0) + m[1].length
+      spans.push({ start, end: start + term.length, skill })
     }
   }
 
-  // Longest spans first; a span is kept only if it doesn't overlap a kept span of another skill.
+  for (const skill of skills) {
+    const terms = skill.caseSensitive ? skill.aliases : [skill.name, ...skill.aliases]
+    for (const term of new Set(terms.map((t) => t.toLowerCase()))) {
+      if (term && lower.includes(term)) addMatches(lower, term, termPattern(term), skill)
+    }
+    if (skill.caseSensitive && text.includes(skill.name)) {
+      addMatches(text, skill.name, caseSensitivePattern(skill.name), skill)
+    }
+  }
+
+  // Longest spans first; a span is dropped if it lies inside a kept span of another skill
+  // ("testing" inside "A/B testing"). Partial overlaps both count: "streaming data
+  // pipelines" mentions Stream Processing and Data Pipelines.
   spans.sort((a, b) => b.end - b.start - (a.end - a.start) || a.start - b.start)
   const kept: Span[] = []
   for (const span of spans) {
-    const clash = kept.some((k) => k.skill.id !== span.skill.id && span.start < k.end && k.start < span.end)
-    if (!clash) kept.push(span)
+    const inside = kept.some((k) => k.skill.id !== span.skill.id && k.start <= span.start && span.end <= k.end)
+    if (!inside) kept.push(span)
   }
 
   // First mention order, collapsing equivalent skills.

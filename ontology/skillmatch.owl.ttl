@@ -291,6 +291,33 @@ sm:skillDescription
     rdfs:domain sm:Skill ;
     rdfs:range xsd:string .
 
+sm:caseSensitive
+    a owl:DatatypeProperty ;
+    rdfs:label "case sensitive"@en ;
+    rdfs:comment "If true, the skill name only matches with its exact capitalisation (e.g. \"Go\" but not the verb \"go\")"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:boolean .
+
+# Provenance for skills added by the automated review (scripts/apply-skill-proposals.ts)
+sm:addedBy
+    a owl:DatatypeProperty ;
+    rdfs:label "added by"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:string .
+
+sm:addedOn
+    a owl:DatatypeProperty ;
+    rdfs:label "added on"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:date .
+
+sm:evidencePostings
+    a owl:DatatypeProperty ;
+    rdfs:label "evidence postings"@en ;
+    rdfs:comment "Number of job postings that listed the skill when it was added"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:integer .
+
 # -----------------------------------------------------------------------------
 # Organization properties
 # -----------------------------------------------------------------------------

@@ -257,6 +257,32 @@ smshape:SkillShape
         sh:message "narrowerSkill must reference valid Skill entities"@en ;
     ] ;
     
+    # Optional: exact-case matching flag
+    sh:property [
+        sh:path sm:caseSensitive ;
+        sh:datatype xsd:boolean ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "caseSensitive must be a single boolean"@en ;
+    ] ;
+
+    # Provenance of automatically added skills
+    sh:property [
+        sh:path sm:addedOn ;
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "addedOn must be a single xsd:date"@en ;
+    ] ;
+    sh:property [
+        sh:path sm:evidencePostings ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "evidencePostings must be a single non-negative integer"@en ;
+    ] ;
+
     # Constraint: A skill cannot be similar to itself
     sh:sparql [
         sh:message "A skill cannot be marked as similar to itself"@en ;

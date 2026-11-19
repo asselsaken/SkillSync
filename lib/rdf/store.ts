@@ -88,6 +88,7 @@ export class MemoryGraphStore implements GraphStore {
           narrowerSkills: this.skillIds(uri, SM + 'narrowerSkill'),
           similarSkills: this.skillIds(uri, SM + 'similarTo'),
           equivalentSkills: this.skillIds(uri, SM + 'equivalentSkill'),
+          caseSensitive: this.value(uri, SM + 'caseSensitive') === 'true',
           isCategory: this.store.has(N3.DataFactory.quad(namedNode(uri), namedNode(PREFIXES.rdf + 'type'), namedNode(SM + 'SkillCategory'))),
         }
       })
