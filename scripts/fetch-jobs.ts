@@ -4,6 +4,7 @@
  *   npm run fetch-jobs                 # all companies in data/companies.json
  *   npm run fetch-jobs -- stripe figma # only these company slugs (others are kept as-is)
  *   npm run fetch-jobs -- --offline    # re-tag skills from data/raw/jobs.json, no network
+ *   npm run fetch-jobs -- --force      # write even if the job count dropped sharply
  *
  * Steps: fetch each board → keep technical roles → tag ontology skills
  * (required vs nice-to-have) → SHACL-validate → write ontology/jobs.rdf.ttl.
@@ -32,6 +33,8 @@ const JOBS_PATH = path.join(ONTOLOGY_DIR, JOBS_FILE)
 const CONCURRENCY = 6
 const MIN_DESCRIPTION_LENGTH = 50
 const MAX_FAILURE_RATIO = 0.25
+/** Refuse to write if the job count falls below this share of the previous run (likely an outage or API change). */
+const MIN_JOB_RATIO = 0.6
 
 interface CompanyResult {
   company: Company
@@ -158,6 +161,16 @@ async function main() {
   const jobCount = new Set(
     jobQuads.filter((q) => q.predicate.value === PREFIXES.rdf + 'type' && q.object.value === PREFIXES.sm + 'JobPosting').map((q) => q.subject.value),
   ).size
+
+  const previousCount: number | undefined = fs.existsSync(SUMMARY_FILE)
+    ? JSON.parse(fs.readFileSync(SUMMARY_FILE, 'utf-8')).jobs
+    : undefined
+  if (previousCount && jobCount < previousCount * MIN_JOB_RATIO && !args.includes('--force')) {
+    throw new Error(
+      `Only ${jobCount} postings vs ${previousCount} last run (below ${MIN_JOB_RATIO * 100}%); not updating. ` +
+        'Re-run with --force if the drop is real.',
+    )
+  }
 
   const fetchedAt = new Date().toISOString()
   const header =
