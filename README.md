@@ -69,21 +69,21 @@ Three GitHub Actions workflows keep the data current:
 
 | Workflow | When | What it does |
 |---|---|---|
-| **Refresh jobs** (`refresh-jobs.yml`) | daily, and when skill files change on `main` | fetches postings, tags skills, SHACL-validates and commits `ontology/jobs.rdf.ttl`. No AI. |
+| **Refresh jobs** (`refresh-jobs.yml`) | daily, and when skill files change on `master` | fetches postings, tags skills, SHACL-validates and commits `ontology/jobs.rdf.ttl`. No AI. |
 | **Grow skill graph** (`grow-graph.yml`) | weekly (Mondays), or on demand | finds candidates, has Claude review them, validates and applies them, runs the tests and **opens a pull request**. Nothing changes until you merge it. |
-| **CI** (`ci.yml`) | every push to `main` and every PR | lint, type-check, tests, build |
+| **CI** (`ci.yml`) | every push to `master` and every PR | lint, type-check, tests, build |
 
 Safety: the refresh doesn't write if more than 25% of job boards fail or the job count drops below 60% of the previous run. A review batch that fails any check or SHACL makes the run fail without opening a PR. In the review, Claude can only read the repo, write in `data/skill-proposals/`, and run the validator.
 
 ### One-time setup
 
-1. **Let workflows open PRs**: *Settings → Actions → General → Workflow permissions*: tick "Allow GitHub Actions to create and approve pull requests". (If `main` is protected, also allow GitHub Actions to push the daily data commit.)
+1. **Let workflows open PRs**: *Settings → Actions → General → Workflow permissions*: tick "Allow GitHub Actions to create and approve pull requests". (If `master` is protected, also allow GitHub Actions to push the daily data commit.)
 2. **Claude for the weekly review** (uses your Claude Pro/Max plan, no API billing). On your own computer, with Claude Code installed:
    ```bash
    claude setup-token
    ```
    Copy the printed token (valid for a year) and add it as a repository secret named `CLAUDE_CODE_OAUTH_TOKEN` (*Settings → Secrets and variables → Actions*). Without it the review is skipped and no PR is opened.
-3. Scheduled workflows only run from the default branch, so they start once this code is on `main`. To try them right away, use **Run workflow** in the Actions tab.
+3. Scheduled workflows only run from the default branch, so they start once this code is on `master`. To try them right away, use **Run workflow** in the Actions tab.
 
 **To add a company**, add one line to `data/companies.json` with its board (`greenhouse`, `lever` or `ashby`) and its slug, which is the company id in the board URL (for example `boards.greenhouse.io/`**`stripe`**).
 
