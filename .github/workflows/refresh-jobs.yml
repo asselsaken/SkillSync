@@ -1,0 +1,57 @@
+# Daily: fetch current postings from company job boards, tag skills,
+# SHACL-validate, and commit the updated graph. No AI involved.
+name: Refresh jobs
+
+on:
+  schedule:
+    - cron: '17 11 * * *' # every day at 11:17 UTC
+  workflow_dispatch: # "Run workflow" button in the Actions tab
+  # Re-tag jobs as soon as a skill review is merged
+  push:
+    branches: [master]
+    paths:
+      - ontology/skills.rdf.ttl
+      - ontology/skills-learned.rdf.ttl
+
+permissions:
+  contents: write
+
+# Never run at the same time as the weekly graph review
+concurrency:
+  group: graph-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Fails (and writes nothing) if >25% of boards are unreachable or the
+      # job count drops below 60% of the previous run.
+      - name: Fetch and tag postings
+        run: npm run fetch-jobs
+
+      - name: Test
+        run: npm test
+
+      - name: Commit updated graph
+        run: |
+          if git diff --quiet -- ontology/jobs.rdf.ttl data/jobs-summary.json; then
+            echo "No changes"
+            exit 0
+          fi
+          jobs=$(node -p "require('./data/jobs-summary.json').jobs")
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ontology/jobs.rdf.ttl data/jobs-summary.json
+          git commit -m "data: refresh job postings (${jobs} postings)"
+          git push

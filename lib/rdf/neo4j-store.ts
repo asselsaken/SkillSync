@@ -11,16 +11,17 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as N3 from 'n3'
 import { PREFIXES, RDFSkill, RDFJobPosting, RDFPerson, RDFOrganization, ValidationResult } from './types'
-import rdfValidate from 'rdf-validate-shacl'
+import { GraphStore, SkillRelation } from './graph-store'
+import { dataFiles, readTurtleFile, validateQuads } from './shacl'
 
 const { DataFactory } = N3
 const { namedNode, literal } = DataFactory
 
-class Neo4jRDFStore {
+class Neo4jRDFStore implements GraphStore {
+  readonly backend = 'neo4j' as const
   private driver: Driver | null = null
   private initialized: boolean = false
   private useNeoSemantics: boolean = false
-  private shaclValidator: any | null = null
 
   constructor() {
     // Neo4j connection configuration from environment variables
@@ -32,7 +33,6 @@ class Neo4jRDFStore {
       this.driver = neo4j.driver(uri, neo4j.auth.basic(user, password))
     } catch (error) {
       console.warn('Neo4j driver initialization failed:', error)
-      console.warn('Falling back to in-memory N3 store')
     }
   }
 
@@ -63,8 +63,12 @@ class Neo4jRDFStore {
         await this.initializeCypherRDF(session)
       }
 
-      // Load SHACL shapes for validation
-      await this.loadSHACLShapes()
+      // Validate all data against the SHACL shapes before loading it
+      const quads = dataFiles().flatMap((file) => readTurtleFile(file))
+      const report = await validateQuads(quads)
+      if (!report.valid) {
+        throw new Error(`SHACL validation failed with ${report.violations.length} violations`)
+      }
 
       // Load RDF data files
       await this.loadRDFData(session)
@@ -114,48 +118,11 @@ class Neo4jRDFStore {
   }
 
   /**
-   * Load SHACL shapes for validation
-   */
-  private async loadSHACLShapes(): Promise<void> {
-    try {
-      const shaclPath = path.join(process.cwd(), 'ontology', 'skillmatch.shacl.ttl')
-      if (fs.existsSync(shaclPath)) {
-        const shaclContent = fs.readFileSync(shaclPath, 'utf-8')
-        const parser = new N3.Parser()
-        const quads: N3.Quad[] = []
-        
-        return new Promise<void>((resolve, reject) => {
-          parser.parse(shaclContent, (error, quad) => {
-            if (error) {
-              reject(error)
-            } else if (quad) {
-              quads.push(quad)
-            } else {
-              // End of parsing
-              const store = new N3.Store(quads)
-              const { Validator } = rdfValidate as unknown as { Validator: new (shapes: N3.Store) => any }
-              this.shaclValidator = Validator ? new Validator(store) : null
-              console.log('SHACL shapes loaded for validation')
-              resolve()
-            }
-          })
-        })
-      }
-    } catch (error) {
-      console.warn('Failed to load SHACL shapes:', error)
-    }
-  }
-
-  /**
    * Load RDF data files into Neo4j
    */
   private async loadRDFData(session: Session): Promise<void> {
     const ontologyDir = path.join(process.cwd(), 'ontology')
-    const files = [
-      'skillmatch.owl.ttl',
-      'skills.rdf.ttl',
-      'sample-data.rdf.ttl'
-    ]
+    const files = dataFiles(ontologyDir)
 
     for (const file of files) {
       const filePath = path.join(ontologyDir, file)
@@ -303,26 +270,7 @@ class Neo4jRDFStore {
    * Validate RDF data against SHACL shapes
    */
   async validateData(dataQuads: N3.Quad[]): Promise<ValidationResult> {
-    if (!this.shaclValidator) {
-      return { valid: true, violations: [] }
-    }
-
-    const dataStore = new N3.Store(dataQuads)
-    const report = this.shaclValidator.validate(dataStore)
-
-    return {
-      valid: report.conforms,
-      violations: report.results.map((result: any) => ({
-        focusNode: result.focusNode?.value || '',
-        path: result.path?.value || '',
-        message: result.message[0]?.value || 'Validation error',
-        severity: (result.severity?.value || 'http://www.w3.org/ns/shacl#Violation').includes('Violation') 
-          ? 'Violation' as const 
-          : (result.severity?.value || '').includes('Warning') 
-            ? 'Warning' as const 
-            : 'Info' as const
-      }))
-    }
+    return validateQuads(dataQuads)
   }
 
   /**
@@ -489,7 +437,7 @@ class Neo4jRDFStore {
   /**
    * Check if two skills are related using SPARQL
    */
-  async areSkillsRelated(skill1Id: string, skill2Id: string): Promise<{ related: boolean; type: string; weight: number }> {
+  async areSkillsRelated(skill1Id: string, skill2Id: string): Promise<SkillRelation> {
     const skill1Uri = `${PREFIXES.skill}${skill1Id}`
     const skill2Uri = `${PREFIXES.skill}${skill2Id}`
 
@@ -525,7 +473,7 @@ class Neo4jRDFStore {
         { skill1: skill1Uri, skill2: skill2Uri }
       )
 
-      const relType = res.records[0]?.get('relType') as string | null
+      const relType = res.records[0]?.get('relType') as Exclude<SkillRelation['type'], 'none'> | null
       if (relType) {
         const weights: Record<string, number> = {
           exact: 1.0,
@@ -662,6 +610,17 @@ class Neo4jRDFStore {
   get size(): number {
     // This would require a count query
     return 0
+  }
+
+  async tripleCount(): Promise<number> {
+    if (!this.driver) return 0
+    const session = this.driver.session()
+    try {
+      const res = await session.run('MATCH ()-[r]->() RETURN count(r) AS rels')
+      return res.records[0]?.get('rels').toNumber() ?? 0
+    } finally {
+      await session.close()
+    }
   }
 }
 

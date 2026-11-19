@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Sidebar from './components/Sidebar'
 
 export const metadata: Metadata = {
-  title: 'SkillSync - Match Your Skills',
+  title: 'SkillMatch - Match Your Skills',
   description: 'Find the perfect job match based on your skills',
 }
 

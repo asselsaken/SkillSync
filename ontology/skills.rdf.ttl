@@ -87,7 +87,7 @@ skill:applied-machine-learning
 skill:deep-learning
     a sm:Skill ;
     sm:skillName "Deep Learning" ;
-    sm:skillAlias "dl", "neural networks", "neural nets", "dnn" ;
+    sm:skillAlias "neural networks", "neural nets", "dnn" ;
     sm:broaderSkill skill:machine-learning ;
     sm:narrowerSkill skill:cnn, skill:rnn, skill:transformers .
 
@@ -161,7 +161,7 @@ skill:pytorch
 skill:tensorflow
     a sm:Skill ;
     sm:skillName "TensorFlow" ;
-    sm:skillAlias "tf", "tensor flow" ;
+    sm:skillAlias "tensor flow" ;
     sm:broaderSkill skill:deep-learning-frameworks ;
     sm:narrowerSkill skill:keras ;
     sm:similarTo skill:pytorch .
@@ -180,7 +180,6 @@ skill:scikit-learn
 skill:pandas
     a sm:Skill ;
     sm:skillName "Pandas" ;
-    sm:skillAlias "pd" ;
     sm:broaderSkill skill:data-manipulation ;
     sm:similarTo skill:polars .
 
@@ -193,7 +192,7 @@ skill:polars
 skill:numpy
     a sm:Skill ;
     sm:skillName "NumPy" ;
-    sm:skillAlias "np", "numpy" ;
+    sm:skillAlias "numpy" ;
     sm:broaderSkill skill:data-manipulation .
 
 skill:xgboost
@@ -252,10 +251,9 @@ skill:regression
 skill:experimental-design
     a sm:Skill ;
     sm:skillName "Experimental Design" ;
-    sm:skillAlias "experiment design", "doe" ;
+    sm:skillAlias "experiment design" ;
     sm:broaderSkill skill:statistics ;
-    sm:narrowerSkill skill:a-b-testing ;
-    sm:equivalentSkill skill:experiment-design .
+    sm:narrowerSkill skill:a-b-testing .
 
 skill:causal-inference
     a sm:Skill ;
@@ -276,7 +274,6 @@ skill:bayesian-statistics
 skill:data-science
     a sm:Skill ;
     sm:skillName "Data Science" ;
-    sm:skillAlias "ds" ;
     sm:narrowerSkill skill:machine-learning, skill:data-analysis, skill:data-visualization .
 
 skill:data-analysis
@@ -303,14 +300,12 @@ skill:dashboards
 skill:matplotlib
     a sm:Skill ;
     sm:skillName "Matplotlib" ;
-    sm:skillAlias "plt" ;
     sm:broaderSkill skill:data-visualization ;
     sm:similarTo skill:seaborn .
 
 skill:seaborn
     a sm:Skill ;
     sm:skillName "Seaborn" ;
-    sm:skillAlias "sns" ;
     sm:broaderSkill skill:data-visualization ;
     sm:similarTo skill:matplotlib .
 
@@ -636,3 +631,51 @@ skill:data-manipulation
     sm:skillName "Data Manipulation" ;
     sm:narrowerSkill skill:pandas, skill:numpy, skill:polars .
 
+# =============================================================================
+# Skills referenced by relations above (found by SHACL: dangling references)
+# =============================================================================
+
+skill:sql-server a sm:Skill ; sm:skillName "SQL Server" ; sm:skillAlias "mssql", "microsoft sql server", "t-sql" ; sm:broaderSkill skill:sql .
+skill:sqlite a sm:Skill ; sm:skillName "SQLite" ; sm:broaderSkill skill:sql .
+skill:nosql-databases a sm:Skill ; sm:skillName "NoSQL Databases" ; sm:skillAlias "nosql" ; sm:broaderSkill skill:databases .
+
+skill:supervised-learning a sm:Skill ; sm:skillName "Supervised Learning" ; sm:broaderSkill skill:machine-learning .
+skill:unsupervised-learning a sm:Skill ; sm:skillName "Unsupervised Learning" ; sm:skillAlias "clustering" ; sm:broaderSkill skill:machine-learning .
+skill:statistical-modeling a sm:Skill ; sm:skillName "Statistical Modeling" ; sm:skillAlias "statistical modelling" ; sm:broaderSkill skill:statistics ; sm:similarTo skill:machine-learning .
+skill:cnn a sm:Skill ; sm:skillName "Convolutional Neural Networks" ; sm:skillAlias "cnn", "cnns" ; sm:broaderSkill skill:deep-learning .
+skill:rnn a sm:Skill ; sm:skillName "Recurrent Neural Networks" ; sm:skillAlias "rnn", "rnns", "lstm" ; sm:broaderSkill skill:deep-learning .
+
+skill:text-classification a sm:Skill ; sm:skillName "Text Classification" ; sm:broaderSkill skill:nlp .
+skill:named-entity-recognition a sm:Skill ; sm:skillName "Named Entity Recognition" ; sm:skillAlias "ner" ; sm:broaderSkill skill:nlp .
+skill:sentiment-analysis a sm:Skill ; sm:skillName "Sentiment Analysis" ; sm:broaderSkill skill:nlp .
+skill:image-generation a sm:Skill ; sm:skillName "Image Generation" ; sm:skillAlias "diffusion models", "stable diffusion" ; sm:broaderSkill skill:generative-ai .
+skill:code-generation a sm:Skill ; sm:skillName "Code Generation" ; sm:broaderSkill skill:generative-ai .
+
+skill:parametric-tests a sm:Skill ; sm:skillName "Parametric Tests" ; sm:skillAlias "t-test", "anova" ; sm:broaderSkill skill:hypothesis-testing .
+skill:non-parametric-tests a sm:Skill ; sm:skillName "Non-parametric Tests" ; sm:skillAlias "nonparametric tests", "mann-whitney" ; sm:broaderSkill skill:hypothesis-testing .
+skill:linear-regression a sm:Skill ; sm:skillName "Linear Regression" ; sm:broaderSkill skill:regression .
+skill:logistic-regression a sm:Skill ; sm:skillName "Logistic Regression" ; sm:broaderSkill skill:regression .
+skill:linear-algebra a sm:Skill ; sm:skillName "Linear Algebra" ; sm:broaderSkill skill:mathematics .
+skill:calculus a sm:Skill ; sm:skillName "Calculus" ; sm:broaderSkill skill:mathematics .
+skill:sas a sm:Skill ; sm:skillName "SAS" ; sm:broaderSkill skill:statistical-computing .
+skill:spss a sm:Skill ; sm:skillName "SPSS" ; sm:broaderSkill skill:statistical-computing .
+
+skill:exploratory-analysis a sm:Skill ; sm:skillName "Exploratory Data Analysis" ; sm:skillAlias "eda", "exploratory analysis" ; sm:broaderSkill skill:data-analysis .
+skill:descriptive-analytics a sm:Skill ; sm:skillName "Descriptive Analytics" ; sm:broaderSkill skill:data-analysis .
+skill:predictive-analytics a sm:Skill ; sm:skillName "Predictive Analytics" ; sm:skillAlias "predictive modeling", "predictive modelling" ; sm:broaderSkill skill:data-analysis ; sm:similarTo skill:machine-learning .
+skill:feature-pipelines a sm:Skill ; sm:skillName "Feature Pipelines" ; sm:skillAlias "feature engineering", "feature store" ; sm:broaderSkill skill:mlops ; sm:similarTo skill:data-pipelines .
+
+skill:s3 a sm:Skill ; sm:skillName "Amazon S3" ; sm:skillAlias "aws s3", "s3" ; sm:broaderSkill skill:aws .
+skill:ec2 a sm:Skill ; sm:skillName "Amazon EC2" ; sm:skillAlias "aws ec2", "ec2" ; sm:broaderSkill skill:aws .
+skill:sagemaker a sm:Skill ; sm:skillName "Amazon SageMaker" ; sm:skillAlias "sagemaker", "aws sagemaker" ; sm:broaderSkill skill:aws, skill:mlops .
+skill:lambda a sm:Skill ; sm:skillName "AWS Lambda" ; sm:skillAlias "amazon lambda" ; sm:broaderSkill skill:aws .
+skill:bigquery a sm:Skill ; sm:skillName "BigQuery" ; sm:skillAlias "google bigquery" ; sm:broaderSkill skill:gcp ; sm:similarTo skill:sql .
+skill:vertex-ai a sm:Skill ; sm:skillName "Vertex AI" ; sm:skillAlias "google vertex ai" ; sm:broaderSkill skill:gcp, skill:mlops .
+skill:azure-ml a sm:Skill ; sm:skillName "Azure Machine Learning" ; sm:skillAlias "azure ml", "azureml" ; sm:broaderSkill skill:azure, skill:mlops .
+
+skill:github-actions a sm:Skill ; sm:skillName "GitHub Actions" ; sm:broaderSkill skill:ci-cd .
+skill:jenkins a sm:Skill ; sm:skillName "Jenkins" ; sm:broaderSkill skill:ci-cd .
+skill:model-versioning a sm:Skill ; sm:skillName "Model Versioning" ; sm:skillAlias "mlflow", "model registry" ; sm:broaderSkill skill:mlops .
+
+skill:nuxt a sm:Skill ; sm:skillName "Nuxt" ; sm:skillAlias "nuxt.js", "nuxtjs" ; sm:broaderSkill skill:vue .
+skill:next-js a sm:Skill ; sm:skillName "Next.js" ; sm:skillAlias "nextjs" ; sm:broaderSkill skill:react .

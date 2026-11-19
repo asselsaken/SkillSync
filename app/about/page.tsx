@@ -8,7 +8,7 @@ export default function AboutPage() {
           <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
             <span className="text-white dark:text-zinc-950 font-bold text-lg">S</span>
           </div>
-          <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillSync</span>
+          <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillMatch</span>
         </div>
       </header>
 
@@ -19,7 +19,7 @@ export default function AboutPage() {
           </h1>
           <div className="text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed space-y-8">
             <p>
-              SkillSync is building a skills-first matching layer for the tech job market. Instead of ranking people by keywords in their CVs, we normalize skills from both resumes and job postings into a shared semantic graph and match candidates based on what they can actually do.
+              SkillMatch is building a skills-first matching layer for the tech job market. Instead of ranking people by keywords in their CVs, we normalize skills from both resumes and job postings into a shared semantic graph and match candidates based on what they can actually do.
             </p>
           </div>
         </div>
@@ -28,7 +28,7 @@ export default function AboutPage() {
 
         <div className="grid gap-8 text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed">
           <p>
-            Born out of <strong className="text-zinc-900 dark:text-white font-semibold">UC Berkeley’s School of Information</strong>, SkillSync combines research-grade semantics (ontologies, knowledge graphs, explainable AI) with very practical hiring problems faced by tech candidates and recruiters. Our goal is simple: turn noisy, generic job search into a precise, transparent skill-matching experience for both sides of the market.
+            Born out of <strong className="text-zinc-900 dark:text-white font-semibold">UC Berkeley’s School of Information</strong>, SkillMatch combines research-grade semantics (ontologies, knowledge graphs, explainable AI) with very practical hiring problems faced by tech candidates and recruiters. Our goal is simple: turn noisy, generic job search into a precise, transparent skill-matching experience for both sides of the market.
           </p>
           
           <p>

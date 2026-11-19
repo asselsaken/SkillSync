@@ -106,15 +106,25 @@ smshape:JobPostingShape
         sh:message "Job posting must have a description (at least 50 characters)"@en ;
     ] ;
     
-    # Required: At least one required skill
+    # Required: at least one required skill or one "any of" skill group
+    sh:or (
+        [ sh:path sm:requiresSkill ; sh:minCount 1 ]
+        [ sh:path sm:requiresOneOf ; sh:minCount 1 ]
+    ) ;
+    sh:message "Job posting must require at least one skill or skill group"@en ;
     sh:property [
         sh:path sm:requiresSkill ;
         sh:name "requires skill" ;
         sh:description "Skills required for the job" ;
         sh:class sm:Skill ;
-        sh:minCount 1 ;
         sh:severity sh:Violation ;
-        sh:message "Job posting must require at least one skill"@en ;
+        sh:message "requiresSkill must reference Skill entities"@en ;
+    ] ;
+    sh:property [
+        sh:path sm:requiresOneOf ;
+        sh:class sm:SkillGroup ;
+        sh:severity sh:Violation ;
+        sh:message "requiresOneOf must reference SkillGroup entities"@en ;
     ] ;
     
     # Optional: Preferred skills
@@ -156,6 +166,42 @@ smshape:JobPostingShape
         sh:maxCount 1 ;
         sh:severity sh:Warning ;
         sh:message "Job URL must be a valid URI"@en ;
+    ] ;
+
+    # Optional: apply URL
+    sh:property [
+        sh:path sm:applyUrl ;
+        sh:datatype xsd:anyURI ;
+        sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "Apply URL must be a single valid URI"@en ;
+    ] ;
+
+    # Optional: remote flag
+    sh:property [
+        sh:path sm:isRemote ;
+        sh:datatype xsd:boolean ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "isRemote must be a single boolean"@en ;
+    ] ;
+
+    # Optional: date posted
+    sh:property [
+        sh:path sm:datePosted ;
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "datePosted must be a single xsd:date"@en ;
+    ] ;
+
+    # Optional: source job board
+    sh:property [
+        sh:path sm:jobSource ;
+        sh:in ( "greenhouse" "lever" "ashby" "sample" ) ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "jobSource must be one of greenhouse, lever, ashby, sample"@en ;
     ] .
 
 # -----------------------------------------------------------------------------
@@ -221,6 +267,32 @@ smshape:SkillShape
         sh:message "narrowerSkill must reference valid Skill entities"@en ;
     ] ;
     
+    # Optional: exact-case matching flag
+    sh:property [
+        sh:path sm:caseSensitive ;
+        sh:datatype xsd:boolean ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "caseSensitive must be a single boolean"@en ;
+    ] ;
+
+    # Provenance of automatically added skills
+    sh:property [
+        sh:path sm:addedOn ;
+        sh:datatype xsd:date ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "addedOn must be a single xsd:date"@en ;
+    ] ;
+    sh:property [
+        sh:path sm:evidencePostings ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "evidencePostings must be a single non-negative integer"@en ;
+    ] ;
+
     # Constraint: A skill cannot be similar to itself
     sh:sparql [
         sh:message "A skill cannot be marked as similar to itself"@en ;
@@ -317,3 +389,17 @@ smshape:SkillWeightShape
         sh:message "Skill weight must be between 0 and 1"@en ;
     ] .
 
+# -----------------------------------------------------------------------------
+# Skill Group Shape - "any of" requirements
+# -----------------------------------------------------------------------------
+smshape:SkillGroupShape
+    a sh:NodeShape ;
+    sh:targetClass sm:SkillGroup ;
+    rdfs:label "Skill Group Shape"@en ;
+    sh:property [
+        sh:path sm:groupMember ;
+        sh:class sm:Skill ;
+        sh:minCount 2 ;
+        sh:severity sh:Violation ;
+        sh:message "A skill group needs at least two Skill members"@en ;
+    ] .

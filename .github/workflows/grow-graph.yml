@@ -1,0 +1,109 @@
+# Weekly: find skills that job postings use but the graph doesn't know,
+# have Claude review them, validate the proposals, and open a pull request.
+# Nothing reaches the live graph until a person merges the PR.
+#
+# Setup (once):
+#   1. On your computer run `claude setup-token` (uses your Claude Pro/Max plan)
+#      and save the printed token as the repository secret CLAUDE_CODE_OAUTH_TOKEN.
+#   2. Settings → Actions → General → Workflow permissions:
+#      tick "Allow GitHub Actions to create and approve pull requests".
+# Without the secret the review step is skipped and no PR is opened.
+name: Grow skill graph
+
+on:
+  schedule:
+    - cron: '43 13 * * 1' # Mondays at 13:43 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: graph-data
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      HAS_CLAUDE_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch postings (full texts for the candidate search)
+        run: npm run fetch-jobs
+
+      - name: Find skill candidates
+        run: npm run graph:candidates
+
+      - name: Today's date
+        id: date
+        run: echo "today=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Skip review (no CLAUDE_CODE_OAUTH_TOKEN secret)
+        if: env.HAS_CLAUDE_TOKEN != 'true'
+        run: echo "::notice::CLAUDE_CODE_OAUTH_TOKEN is not set; skipping the Claude review."
+
+      # Claude may only read the repo, write into data/skill-proposals/, and run the validator.
+      - name: Review candidates with Claude
+        if: env.HAS_CLAUDE_TOKEN == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            Follow the instructions in prompts/review-skill-candidates.md.
+            Today's date is ${{ steps.date.outputs.today }}.
+            When `npm run graph:apply -- --check` reports no problems, stop.
+          claude_args: |
+            --allowedTools "Read,Glob,Grep,Edit(./data/skill-proposals/**),Bash(npm run graph:apply -- --check)"
+            --max-turns 60
+
+      - name: Detect a new review batch
+        id: batch
+        run: |
+          if [ -n "$(git status --porcelain -- data/skill-proposals)" ]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No new review batch was written."
+          fi
+
+      # Strict checks + SHACL; fails the run (no PR) if the batch is invalid.
+      - name: Validate and apply proposals
+        if: steps.batch.outputs.new == 'true'
+        run: npm run graph:apply
+
+      - name: Test
+        if: steps.batch.outputs.new == 'true'
+        run: npm test
+
+      - name: Write PR description
+        if: steps.batch.outputs.new == 'true'
+        run: npx tsx scripts/proposal-summary.ts > "$RUNNER_TEMP/pr-body.md"
+
+      # Only skill files go in the PR; jobs are re-tagged by "Refresh jobs" after merge.
+      - name: Open pull request
+        if: steps.batch.outputs.new == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: graph/review-${{ steps.date.outputs.today }}
+          title: 'Skill graph review ${{ steps.date.outputs.today }}'
+          body-path: ${{ runner.temp }}/pr-body.md
+          commit-message: 'graph: skill review ${{ steps.date.outputs.today }}'
+          add-paths: |
+            data/skill-proposals/*.json
+            ontology/skills-learned.rdf.ttl
+            data/skill-candidates.json
+          labels: skill-graph
+          delete-branch: true

@@ -30,7 +30,7 @@ export default function Sidebar() {
         <div className="w-8 h-8 bg-zinc-900 dark:bg-white rounded-lg flex items-center justify-center">
           <span className="text-white dark:text-zinc-950 font-bold text-lg">S</span>
         </div>
-        <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillSync</span>
+        <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight">SkillMatch</span>
       </Link>
 
       <nav className="flex flex-col gap-2 flex-1">
@@ -51,7 +51,7 @@ export default function Sidebar() {
 
       <div className="mt-auto pt-6 border-t border-zinc-200 dark:border-zinc-800 px-2">
         <p className="text-xs text-zinc-400 dark:text-zinc-500">
-          © 2025 SkillSync
+          © 2026 SkillMatch
         </p>
       </div>
     </aside>

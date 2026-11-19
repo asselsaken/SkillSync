@@ -1,283 +1,225 @@
 /**
- * RDF Store - Triple Store using N3.js
- * 
- * Provides in-memory RDF storage with SPARQL-like querying capabilities
+ * In-memory RDF graph store (default backend).
+ *
+ * - N3.Store for fast triple lookups used by the matcher
+ * - Oxigraph (WASM) for real SPARQL 1.1 queries
+ * - SHACL validation of all data on load
+ *
+ * Needs no external services, so it runs anywhere (local, Vercel, CI).
  */
 
 import * as N3 from 'n3'
-import * as fs from 'fs'
-import * as path from 'path'
-import { PREFIXES, RDFSkill, RDFJobPosting, RDFPerson, RDFOrganization } from './types'
+import * as oxigraph from 'oxigraph'
+import { GraphStore, SkillRelation, SparqlRow } from './graph-store'
+import { dataFiles, ONTOLOGY_DIR, readTurtleFile, validateQuads } from './shacl'
+import { MATCH_TYPE_WEIGHTS, PREFIXES, RDFJobPosting, RDFOrganization, RDFPerson, RDFSkill } from './types'
 
-const { DataFactory } = N3
-const { namedNode, literal } = DataFactory
+const { namedNode } = N3.DataFactory
 
-class RDFStore {
-  private store: N3.Store
-  private initialized: boolean = false
+const SM = PREFIXES.sm
+const TRANSITIVE_NARROWER_WEIGHT = 0.7
+const MAX_SPARQL_ROWS = 1000
 
-  constructor() {
-    this.store = new N3.Store()
-  }
+const stripPrefix = (uri: string, prefix: string) => (uri.startsWith(prefix) ? uri.slice(prefix.length) : uri)
 
-  /**
-   * Initialize the store by loading all ontology and data files
-   */
+export class MemoryGraphStore implements GraphStore {
+  readonly backend = 'memory' as const
+  private store = new N3.Store()
+  private sparqlStore: oxigraph.Store | null = null
+  private initialized = false
+  private skillsCache: RDFSkill[] | null = null
+  private jobsCache: RDFJobPosting[] | null = null
+
+  constructor(
+    private readonly dataDir: string = ONTOLOGY_DIR,
+    private readonly files: string[] = dataFiles(dataDir),
+  ) {}
+
   async initialize(): Promise<void> {
     if (this.initialized) return
 
-    const ontologyDir = path.join(process.cwd(), 'ontology')
-    
-    // Load all Turtle files
-    const files = [
-      'skillmatch.owl.ttl',
-      'skills.rdf.ttl',
-      'sample-data.rdf.ttl'
-    ]
+    const quads = this.files.flatMap((file) => readTurtleFile(file, this.dataDir))
 
-    for (const file of files) {
-      const filePath = path.join(ontologyDir, file)
-      if (fs.existsSync(filePath)) {
-        await this.loadTurtleFile(filePath)
-      }
+    const report = await validateQuads(quads)
+    if (!report.valid) {
+      const summary = report.violations
+        .slice(0, 5)
+        .map((v) => `${v.focusNode} ${v.path}: ${v.message}`)
+        .join('\n  ')
+      throw new Error(`SHACL validation failed (${report.violations.length} violations):\n  ${summary}`)
     }
 
+    this.store = new N3.Store(quads)
+    this.sparqlStore = new oxigraph.Store(quads as unknown as oxigraph.Quad[])
     this.initialized = true
-    console.log(`RDF Store initialized with ${this.store.size} triples`)
+    console.log(`In-memory RDF store loaded ${this.store.size} triples (SHACL valid)`)
   }
 
-  /**
-   * Load a Turtle file into the store
-   */
-  private async loadTurtleFile(filePath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const content = fs.readFileSync(filePath, 'utf-8')
-      const parser = new N3.Parser()
-      
-      parser.parse(content, (error, quad, prefixes) => {
-        if (error) {
-          reject(error)
-        } else if (quad) {
-          this.store.addQuad(quad)
-        } else {
-          resolve()
+  // ---------------------------------------------------------------- helpers
+
+  private values(subject: string, predicate: string): string[] {
+    return this.store.getObjects(namedNode(subject), namedNode(predicate), null).map((o) => o.value)
+  }
+
+  private value(subject: string, predicate: string): string | undefined {
+    return this.values(subject, predicate)[0]
+  }
+
+  private subjectsOfType(type: string): string[] {
+    return this.store.getSubjects(namedNode(PREFIXES.rdf + 'type'), namedNode(type), null).map((s) => s.value)
+  }
+
+  private skillIds(subject: string, predicate: string): string[] {
+    return this.values(subject, predicate).map((u) => stripPrefix(u, PREFIXES.skill))
+  }
+
+  // ---------------------------------------------------------------- entities
+
+  async getAllSkills(): Promise<RDFSkill[]> {
+    if (!this.skillsCache) {
+      this.skillsCache = this.subjectsOfType(SM + 'Skill').map((uri) => {
+        const id = stripPrefix(uri, PREFIXES.skill)
+        return {
+          id,
+          uri,
+          name: this.value(uri, SM + 'skillName') ?? id,
+          aliases: this.values(uri, SM + 'skillAlias'),
+          broaderSkills: this.skillIds(uri, SM + 'broaderSkill'),
+          narrowerSkills: this.skillIds(uri, SM + 'narrowerSkill'),
+          similarSkills: this.skillIds(uri, SM + 'similarTo'),
+          equivalentSkills: this.skillIds(uri, SM + 'equivalentSkill'),
+          caseSensitive: this.value(uri, SM + 'caseSensitive') === 'true',
+          isCategory: this.store.has(N3.DataFactory.quad(namedNode(uri), namedNode(PREFIXES.rdf + 'type'), namedNode(SM + 'SkillCategory'))),
         }
       })
-    })
+    }
+    return this.skillsCache
   }
 
-  /**
-   * Add a triple to the store
-   */
-  addTriple(subject: string, predicate: string, object: string | N3.Literal): void {
-    const obj = typeof object === 'string' ? namedNode(object) : object
-    this.store.addQuad(namedNode(subject), namedNode(predicate), obj)
-  }
-
-  /**
-   * Add a literal triple
-   */
-  addLiteralTriple(subject: string, predicate: string, value: string, datatype?: string): void {
-    const lit = datatype 
-      ? literal(value, namedNode(datatype))
-      : literal(value)
-    this.store.addQuad(namedNode(subject), namedNode(predicate), lit)
-  }
-
-  /**
-   * Query triples matching a pattern
-   */
-  getTriples(subject?: string, predicate?: string, object?: string): N3.Quad[] {
-    return this.store.getQuads(
-      subject ? namedNode(subject) : null,
-      predicate ? namedNode(predicate) : null,
-      object ? namedNode(object) : null,
-      null
+  async getSkill(idOrName: string): Promise<RDFSkill | undefined> {
+    const needle = idOrName.toLowerCase().trim()
+    return (await this.getAllSkills()).find(
+      (s) =>
+        s.id.toLowerCase() === needle ||
+        s.name.toLowerCase() === needle ||
+        s.aliases.some((a) => a.toLowerCase() === needle),
     )
   }
 
-  /**
-   * Get all values for a subject-predicate pair
-   */
-  getValues(subject: string, predicate: string): string[] {
-    const quads = this.store.getQuads(namedNode(subject), namedNode(predicate), null, null)
-    return quads.map(q => q.object.value)
-  }
-
-  /**
-   * Get a single value for a subject-predicate pair
-   */
-  getValue(subject: string, predicate: string): string | undefined {
-    const values = this.getValues(subject, predicate)
-    return values[0]
-  }
-
-  /**
-   * Get all subjects of a given type
-   */
-  getSubjectsOfType(type: string): string[] {
-    const quads = this.store.getQuads(null, namedNode(PREFIXES.rdf + 'type'), namedNode(type), null)
-    return quads.map(q => q.subject.value)
-  }
-
-  /**
-   * Get all skills from the store
-   */
-  getAllSkills(): RDFSkill[] {
-    const skillUris = this.getSubjectsOfType(PREFIXES.sm + 'Skill')
-    
-    return skillUris.map(uri => {
-      const id = uri.replace(PREFIXES.skill, '')
+  async getAllJobPostings(): Promise<RDFJobPosting[]> {
+    if (this.jobsCache) return this.jobsCache
+    const orgNames = new Map<string, string>()
+    this.jobsCache = this.subjectsOfType(SM + 'JobPosting').map((uri) => {
+      const orgUri = this.value(uri, SM + 'postedBy') ?? ''
+      if (!orgNames.has(orgUri)) {
+        orgNames.set(orgUri, this.value(orgUri, SM + 'organizationName') ?? stripPrefix(orgUri, PREFIXES.org))
+      }
+      const remote = this.value(uri, SM + 'isRemote')
       return {
-        id,
+        id: stripPrefix(uri, PREFIXES.job),
         uri,
-        name: this.getValue(uri, PREFIXES.sm + 'skillName') || id,
-        aliases: this.getValues(uri, PREFIXES.sm + 'skillAlias'),
-        broaderSkills: this.getValues(uri, PREFIXES.sm + 'broaderSkill').map(u => u.replace(PREFIXES.skill, '')),
-        narrowerSkills: this.getValues(uri, PREFIXES.sm + 'narrowerSkill').map(u => u.replace(PREFIXES.skill, '')),
-        similarSkills: this.getValues(uri, PREFIXES.sm + 'similarTo').map(u => u.replace(PREFIXES.skill, '')),
-        equivalentSkills: this.getValues(uri, PREFIXES.sm + 'equivalentSkill').map(u => u.replace(PREFIXES.skill, '')),
+        title: this.value(uri, SM + 'jobTitle') ?? uri,
+        description: this.value(uri, SM + 'jobDescription') ?? '',
+        location: this.value(uri, SM + 'location'),
+        url: this.value(uri, SM + 'jobUrl'),
+        organization: orgNames.get(orgUri) ?? '',
+        requiredSkills: this.skillIds(uri, SM + 'requiresSkill'),
+        requiredGroups: this.values(uri, SM + 'requiresOneOf').map((g) => this.skillIds(g, SM + 'groupMember')),
+        preferredSkills: this.skillIds(uri, SM + 'prefersSkill'),
+        datePosted: this.value(uri, SM + 'datePosted'),
+        applyUrl: this.value(uri, SM + 'applyUrl'),
+        isRemote: remote === undefined ? undefined : remote === 'true',
+        department: this.value(uri, SM + 'department'),
+        employmentType: this.value(uri, SM + 'employmentType'),
+        salary: this.value(uri, SM + 'salary'),
+        source: this.value(uri, SM + 'jobSource'),
       }
     })
+    return this.jobsCache
   }
 
-  /**
-   * Get a skill by ID or name
-   */
-  getSkill(idOrName: string): RDFSkill | undefined {
-    const allSkills = this.getAllSkills()
-    const normalized = idOrName.toLowerCase().trim()
-    
-    return allSkills.find(skill => 
-      skill.id.toLowerCase() === normalized ||
-      skill.name.toLowerCase() === normalized ||
-      skill.aliases.some(a => a.toLowerCase() === normalized)
-    )
+  async getAllPeople(): Promise<RDFPerson[]> {
+    return this.subjectsOfType(SM + 'Person').map((uri) => ({
+      id: stripPrefix(uri, PREFIXES.person),
+      uri,
+      name: this.value(uri, SM + 'personName') ?? uri,
+      email: this.value(uri, SM + 'email'),
+      skills: this.skillIds(uri, SM + 'hasSkill'),
+      resumeText: this.value(uri, SM + 'resumeText'),
+    }))
   }
 
-  /**
-   * Get all job postings from the store
-   */
-  getAllJobPostings(): RDFJobPosting[] {
-    const jobUris = this.getSubjectsOfType(PREFIXES.sm + 'JobPosting')
-    
-    return jobUris.map(uri => {
-      const id = uri.replace(PREFIXES.job, '')
-      const orgUri = this.getValue(uri, PREFIXES.sm + 'postedBy') || ''
-      
-      return {
-        id,
-        uri,
-        title: this.getValue(uri, PREFIXES.sm + 'jobTitle') || id,
-        description: this.getValue(uri, PREFIXES.sm + 'jobDescription') || '',
-        location: this.getValue(uri, PREFIXES.sm + 'location'),
-        url: this.getValue(uri, PREFIXES.sm + 'jobUrl'),
-        organization: this.getValue(orgUri, PREFIXES.sm + 'organizationName') || orgUri.replace(PREFIXES.org, ''),
-        requiredSkills: this.getValues(uri, PREFIXES.sm + 'requiresSkill').map(u => u.replace(PREFIXES.skill, '')),
-        preferredSkills: this.getValues(uri, PREFIXES.sm + 'prefersSkill').map(u => u.replace(PREFIXES.skill, '')),
-        datePosted: this.getValue(uri, PREFIXES.sm + 'datePosted'),
-      }
-    })
+  async getAllOrganizations(): Promise<RDFOrganization[]> {
+    return this.subjectsOfType(SM + 'Organization').map((uri) => ({
+      id: stripPrefix(uri, PREFIXES.org),
+      uri,
+      name: this.value(uri, SM + 'organizationName') ?? uri,
+    }))
   }
 
-  /**
-   * Get all people from the store
-   */
-  getAllPeople(): RDFPerson[] {
-    const personUris = this.getSubjectsOfType(PREFIXES.sm + 'Person')
-    
-    return personUris.map(uri => {
-      const id = uri.replace(PREFIXES.person, '')
-      return {
-        id,
-        uri,
-        name: this.getValue(uri, PREFIXES.sm + 'personName') || id,
-        email: this.getValue(uri, PREFIXES.sm + 'email'),
-        skills: this.getValues(uri, PREFIXES.sm + 'hasSkill').map(u => u.replace(PREFIXES.skill, '')),
-        resumeText: this.getValue(uri, PREFIXES.sm + 'resumeText'),
-      }
-    })
-  }
+  // ---------------------------------------------------------------- reasoning
 
   /**
-   * Get all organizations from the store
+   * How does a candidate's skill relate to a job's required skill?
+   * Relations are read in both directions so symmetric/inverse properties
+   * work even when the data only states one side.
    */
-  getAllOrganizations(): RDFOrganization[] {
-    const orgUris = this.getSubjectsOfType(PREFIXES.sm + 'Organization')
-    
-    return orgUris.map(uri => {
-      const id = uri.replace(PREFIXES.org, '')
-      return {
-        id,
-        uri,
-        name: this.getValue(uri, PREFIXES.sm + 'organizationName') || id,
-      }
-    })
-  }
+  async areSkillsRelated(personSkillId: string, jobSkillId: string): Promise<SkillRelation> {
+    if (personSkillId === jobSkillId) return { related: true, type: 'exact', weight: MATCH_TYPE_WEIGHTS.exact }
 
-  /**
-   * Check if two skills are related
-   */
-  areSkillsRelated(skill1Id: string, skill2Id: string): { related: boolean; type: string; weight: number } {
-    const skill1Uri = PREFIXES.skill + skill1Id
-    const skill2Uri = PREFIXES.skill + skill2Id
+    const p = PREFIXES.skill + personSkillId
+    const j = PREFIXES.skill + jobSkillId
+    const has = (s: string, pred: string, o: string) => this.store.has(N3.DataFactory.quad(namedNode(s), namedNode(SM + pred), namedNode(o)))
 
-    // Check exact match (same skill)
-    if (skill1Id === skill2Id) {
-      return { related: true, type: 'exact', weight: 1.0 }
+    if (has(p, 'equivalentSkill', j) || has(j, 'equivalentSkill', p)) {
+      return { related: true, type: 'equivalent', weight: MATCH_TYPE_WEIGHTS.equivalent }
     }
-
-    // Check equivalent skills
-    const equivalents = this.getValues(skill1Uri, PREFIXES.sm + 'equivalentSkill')
-    if (equivalents.includes(skill2Uri)) {
-      return { related: true, type: 'equivalent', weight: 1.0 }
+    // Candidate's skill is a specialisation of the requirement (e.g. PostgreSQL -> SQL)
+    if (has(p, 'broaderSkill', j) || has(j, 'narrowerSkill', p)) {
+      return { related: true, type: 'narrower', weight: MATCH_TYPE_WEIGHTS.narrower }
     }
-
-    // Check if skill1 is narrower than skill2 (more specific)
-    const broader = this.getValues(skill1Uri, PREFIXES.sm + 'broaderSkill')
-    if (broader.includes(skill2Uri)) {
-      return { related: true, type: 'narrower', weight: 0.85 }
+    if (has(p, 'similarTo', j) || has(j, 'similarTo', p)) {
+      return { related: true, type: 'similar', weight: MATCH_TYPE_WEIGHTS.similar }
     }
-
-    // Check if skill1 is broader than skill2 (more general)
-    const narrower = this.getValues(skill1Uri, PREFIXES.sm + 'narrowerSkill')
-    if (narrower.includes(skill2Uri)) {
-      return { related: true, type: 'broader', weight: 0.5 }
+    // Candidate's skill is more general than the requirement
+    if (has(p, 'narrowerSkill', j) || has(j, 'broaderSkill', p)) {
+      return { related: true, type: 'broader', weight: MATCH_TYPE_WEIGHTS.broader }
     }
-
-    // Check similar skills
-    const similar = this.getValues(skill1Uri, PREFIXES.sm + 'similarTo')
-    if (similar.includes(skill2Uri)) {
-      return { related: true, type: 'similar', weight: 0.6 }
-    }
-
-    // Check transitive broader (2 levels)
-    for (const broaderUri of broader) {
-      const grandBroader = this.getValues(broaderUri, PREFIXES.sm + 'broaderSkill')
-      if (grandBroader.includes(skill2Uri)) {
-        return { related: true, type: 'narrower', weight: 0.7 }
+    // Two-level specialisation (e.g. Django -> Python -> Programming)
+    for (const parent of this.values(p, SM + 'broaderSkill')) {
+      if (has(parent, 'broaderSkill', j)) {
+        return { related: true, type: 'narrower', weight: TRANSITIVE_NARROWER_WEIGHT }
       }
     }
-
     return { related: false, type: 'none', weight: 0 }
   }
 
-  /**
-   * Get the total number of triples in the store
-   */
-  get size(): number {
-    return this.store.size
+  // ---------------------------------------------------------------- SPARQL
+
+  async executeSPARQL(query: string): Promise<SparqlRow[]> {
+    if (!this.sparqlStore) throw new Error('Store not initialized')
+    const result = this.sparqlStore.query(query)
+
+    if (typeof result === 'boolean') return [{ result: String(result) }]
+    if (typeof result === 'string') return [{ result }]
+
+    const rows: SparqlRow[] = []
+    for (const item of result as Iterable<Map<string, oxigraph.Term> | oxigraph.Quad>) {
+      if (rows.length >= MAX_SPARQL_ROWS) break
+      if (item instanceof Map) {
+        const row: SparqlRow = {}
+        item.forEach((term, name) => (row[name] = term.value))
+        rows.push(row)
+      } else {
+        rows.push({ subject: item.subject.value, predicate: item.predicate.value, object: item.object.value })
+      }
+    }
+    return rows
   }
 
-  /**
-   * Clear the store
-   */
-  clear(): void {
-    this.store = new N3.Store()
-    this.initialized = false
+  async tripleCount(): Promise<number> {
+    return this.store.size
   }
 }
 
-// Export singleton instance
-export const rdfStore = new RDFStore()
-
+export const memoryStore = new MemoryGraphStore()

@@ -1,0 +1,340 @@
+{
+  "$comment": "Companies whose public job boards SkillMatch reads. Add one line to add a company: board is greenhouse, lever or ashby; slug is the company's id in the board URL.",
+  "companies": [
+    {
+      "name": "Affirm",
+      "board": "greenhouse",
+      "slug": "affirm"
+    },
+    {
+      "name": "Airbnb",
+      "board": "greenhouse",
+      "slug": "airbnb"
+    },
+    {
+      "name": "Airtable",
+      "board": "greenhouse",
+      "slug": "airtable"
+    },
+    {
+      "name": "Anthropic",
+      "board": "greenhouse",
+      "slug": "anthropic"
+    },
+    {
+      "name": "Asana",
+      "board": "greenhouse",
+      "slug": "asana"
+    },
+    {
+      "name": "Block",
+      "board": "greenhouse",
+      "slug": "block"
+    },
+    {
+      "name": "Brex",
+      "board": "greenhouse",
+      "slug": "brex"
+    },
+    {
+      "name": "Chime",
+      "board": "greenhouse",
+      "slug": "chime"
+    },
+    {
+      "name": "Clerk",
+      "board": "ashby",
+      "slug": "clerk"
+    },
+    {
+      "name": "Cloudflare",
+      "board": "greenhouse",
+      "slug": "cloudflare"
+    },
+    {
+      "name": "Cohere",
+      "board": "ashby",
+      "slug": "cohere"
+    },
+    {
+      "name": "Coinbase",
+      "board": "greenhouse",
+      "slug": "coinbase"
+    },
+    {
+      "name": "Cursor",
+      "board": "ashby",
+      "slug": "cursor"
+    },
+    {
+      "name": "Databricks",
+      "board": "greenhouse",
+      "slug": "databricks"
+    },
+    {
+      "name": "Datadog",
+      "board": "greenhouse",
+      "slug": "datadog"
+    },
+    {
+      "name": "Discord",
+      "board": "greenhouse",
+      "slug": "discord"
+    },
+    {
+      "name": "Dropbox",
+      "board": "greenhouse",
+      "slug": "dropbox"
+    },
+    {
+      "name": "Duolingo",
+      "board": "greenhouse",
+      "slug": "duolingo"
+    },
+    {
+      "name": "Elastic",
+      "board": "greenhouse",
+      "slug": "elastic"
+    },
+    {
+      "name": "ElevenLabs",
+      "board": "ashby",
+      "slug": "elevenlabs"
+    },
+    {
+      "name": "Figma",
+      "board": "greenhouse",
+      "slug": "figma"
+    },
+    {
+      "name": "Flexport",
+      "board": "greenhouse",
+      "slug": "flexport"
+    },
+    {
+      "name": "GitLab",
+      "board": "greenhouse",
+      "slug": "gitlab"
+    },
+    {
+      "name": "Gusto",
+      "board": "greenhouse",
+      "slug": "gusto"
+    },
+    {
+      "name": "Harvey",
+      "board": "ashby",
+      "slug": "harvey"
+    },
+    {
+      "name": "Instacart",
+      "board": "greenhouse",
+      "slug": "instacart"
+    },
+    {
+      "name": "Klaviyo",
+      "board": "greenhouse",
+      "slug": "klaviyo"
+    },
+    {
+      "name": "Linear",
+      "board": "ashby",
+      "slug": "linear"
+    },
+    {
+      "name": "Lyft",
+      "board": "greenhouse",
+      "slug": "lyft"
+    },
+    {
+      "name": "Modal",
+      "board": "ashby",
+      "slug": "modal"
+    },
+    {
+      "name": "MongoDB",
+      "board": "greenhouse",
+      "slug": "mongodb"
+    },
+    {
+      "name": "Notion",
+      "board": "ashby",
+      "slug": "notion"
+    },
+    {
+      "name": "Nuro",
+      "board": "greenhouse",
+      "slug": "nuro"
+    },
+    {
+      "name": "Okta",
+      "board": "greenhouse",
+      "slug": "okta"
+    },
+    {
+      "name": "OpenAI",
+      "board": "ashby",
+      "slug": "openai"
+    },
+    {
+      "name": "Outreach",
+      "board": "lever",
+      "slug": "outreach"
+    },
+    {
+      "name": "Palantir",
+      "board": "lever",
+      "slug": "palantir"
+    },
+    {
+      "name": "Peloton",
+      "board": "greenhouse",
+      "slug": "peloton"
+    },
+    {
+      "name": "Perplexity",
+      "board": "ashby",
+      "slug": "perplexity"
+    },
+    {
+      "name": "Pinterest",
+      "board": "greenhouse",
+      "slug": "pinterest"
+    },
+    {
+      "name": "Plaid",
+      "board": "ashby",
+      "slug": "plaid"
+    },
+    {
+      "name": "PostHog",
+      "board": "ashby",
+      "slug": "posthog"
+    },
+    {
+      "name": "Ramp",
+      "board": "ashby",
+      "slug": "ramp"
+    },
+    {
+      "name": "Reddit",
+      "board": "greenhouse",
+      "slug": "reddit"
+    },
+    {
+      "name": "Replit",
+      "board": "ashby",
+      "slug": "replit"
+    },
+    {
+      "name": "Ro",
+      "board": "lever",
+      "slug": "ro"
+    },
+    {
+      "name": "Robinhood",
+      "board": "greenhouse",
+      "slug": "robinhood"
+    },
+    {
+      "name": "Roblox",
+      "board": "greenhouse",
+      "slug": "roblox"
+    },
+    {
+      "name": "Runway",
+      "board": "ashby",
+      "slug": "runway"
+    },
+    {
+      "name": "Samsara",
+      "board": "greenhouse",
+      "slug": "samsara"
+    },
+    {
+      "name": "Scale AI",
+      "board": "greenhouse",
+      "slug": "scaleai"
+    },
+    {
+      "name": "Sierra",
+      "board": "ashby",
+      "slug": "sierra"
+    },
+    {
+      "name": "Snowflake",
+      "board": "ashby",
+      "slug": "snowflake"
+    },
+    {
+      "name": "SoFi",
+      "board": "greenhouse",
+      "slug": "sofi"
+    },
+    {
+      "name": "Spotify",
+      "board": "lever",
+      "slug": "spotify"
+    },
+    {
+      "name": "Squarespace",
+      "board": "greenhouse",
+      "slug": "squarespace"
+    },
+    {
+      "name": "Stripe",
+      "board": "greenhouse",
+      "slug": "stripe"
+    },
+    {
+      "name": "Supabase",
+      "board": "ashby",
+      "slug": "supabase"
+    },
+    {
+      "name": "Toast",
+      "board": "greenhouse",
+      "slug": "toast"
+    },
+    {
+      "name": "Twilio",
+      "board": "greenhouse",
+      "slug": "twilio"
+    },
+    {
+      "name": "Twitch",
+      "board": "greenhouse",
+      "slug": "twitch"
+    },
+    {
+      "name": "Vanta",
+      "board": "ashby",
+      "slug": "vanta"
+    },
+    {
+      "name": "Vercel",
+      "board": "greenhouse",
+      "slug": "vercel"
+    },
+    {
+      "name": "Verkada",
+      "board": "greenhouse",
+      "slug": "verkada"
+    },
+    {
+      "name": "Waymo",
+      "board": "greenhouse",
+      "slug": "waymo"
+    },
+    {
+      "name": "Zapier",
+      "board": "ashby",
+      "slug": "zapier"
+    },
+    {
+      "name": "Zoox",
+      "board": "lever",
+      "slug": "zoox"
+    }
+  ]
+}
