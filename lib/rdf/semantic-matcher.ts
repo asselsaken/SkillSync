@@ -243,9 +243,15 @@ export function generateReasons(matchedSkills: SkillMatchDetail[]): string[] {
 
 export function generateSummary(description: string, maxLength = 150): string {
   if (!description) return ''
+  // Bullet lists become sentences: "• Build APIs\n• Own on-call" -> "Build APIs. Own on-call."
   const text = description
     .replace(/About the job\n?/gi, '')
     .replace(/About The Role\n?/gi, '')
+    .split('\n')
+    .map((l) => l.replace(/^\s*[•\-*]\s*/, '').trim())
+    .filter(Boolean)
+    .map((l) => (/[.!?:;]$/.test(l) ? l : l + '.'))
+    .join(' ')
     .replace(/\s+/g, ' ')
     .trim()
   if (text.length <= maxLength) return text

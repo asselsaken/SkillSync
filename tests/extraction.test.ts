@@ -111,3 +111,10 @@ describe('partially overlapping matches', () => {
     expect(extractSkillIds('Built streaming data pipelines', [stream, pipes]).sort()).toEqual(['data-pipelines', 'stream-processing'])
   })
 })
+
+describe('generateSummary', () => {
+  it('turns bullet lists into sentences', async () => {
+    const { generateSummary } = await import('../lib/rdf/semantic-matcher')
+    expect(generateSummary('• Build APIs\n• Own on-call rotations')).toBe('Build APIs. Own on-call rotations.')
+  })
+})

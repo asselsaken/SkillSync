@@ -102,3 +102,49 @@ export function toIsoDate(value: string | number | undefined | null): string | u
 
 export const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+
+// ------------------------------------------------------------------ summaries
+
+const ROLE_HEADING =
+  /\b(about the (role|job|position|team|opportunity)|the role|role (overview|summary|description)|the opportunity|position (overview|summary)|job (summary|description|overview)|what you['’]ll (do|work on)|what you will (do|work on)|your (role|impact|responsibilities|mission)|responsibilities|in this role)\b/i
+
+const ROLE_PHRASE =
+  /\b(you['’]ll|you will|we['’]re looking for|we are looking for|we['’]re hiring|we are hiring|we['’]re seeking|we are seeking|in this role|this role|the role|your role|join (our|the) [a-z]+ team)\b/i
+/** "As a Senior Engineer, …" (capitalised title, so "as a result" doesn't count) */
+const AS_A_TITLE = /\b[Aa]s an? [A-Z]/
+
+const firstRoleSentence = (text: string) => {
+  const hits = [text.search(ROLE_PHRASE), text.search(AS_A_TITLE)].filter((i) => i >= 0)
+  return hits.length ? Math.min(...hits) : -1
+}
+
+/**
+ * The part of a description that is about the role rather than the company:
+ * text after a role heading ("About the role", "What you'll do"…), else from the
+ * first sentence that speaks about the role, else the whole description.
+ */
+export function roleExcerpt(description: string): string {
+  // Benefits, EEO and "About us" sections are dropped first.
+  const body = splitSections(description).required.trim() || description
+  const lines = body.split('\n')
+
+  const heading = lines.findIndex((l) => {
+    const line = l.replace(/^[•\-*\s]+/, '').trim()
+    return isHeading(line) && ROLE_HEADING.test(line) && !/company/i.test(line)
+  })
+  if (heading >= 0) {
+    const rest = lines.slice(heading + 1).join('\n').trim()
+    if (rest.length >= 50) return rest
+  }
+
+  const sentence = firstRoleSentence(body)
+  if (sentence >= 0) {
+    // Back up to the start of that sentence (or line)
+    const before = body.slice(0, sentence)
+    const starts = [before.lastIndexOf('. '), before.lastIndexOf('! '), before.lastIndexOf('? ')].map((i) => (i < 0 ? 0 : i + 2))
+    const start = Math.max(...starts, before.lastIndexOf('\n') + 1)
+    const rest = body.slice(start).trim()
+    if (rest.length >= 50) return rest
+  }
+  return body
+}

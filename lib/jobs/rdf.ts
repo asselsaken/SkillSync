@@ -7,7 +7,7 @@ import { extractSkillIds } from '../rdf/semantic-matcher'
 import { PREFIXES, RDFSkill } from '../rdf/types'
 import { EnrichedJob, NormalizedJob } from './types'
 import { analyseRequirements } from './groups'
-import { splitSections, truncate } from './text'
+import { roleExcerpt, splitSections, truncate } from './text'
 
 const { namedNode, literal, quad } = N3.DataFactory
 const SM = PREFIXES.sm
@@ -65,7 +65,8 @@ export function jobsToQuads(jobs: EnrichedJob[]): N3.Quad[] {
     const s = jobUri(job.id)
     add(s, PREFIXES.rdf + 'type', namedNode(SM + 'JobPosting'))
     add(s, SM + 'jobTitle', str(truncate(job.title, TITLE_MAX_LENGTH)))
-    add(s, SM + 'jobDescription', str(truncate(job.description, STORED_DESCRIPTION_LENGTH)))
+    // Store the part about the role (not the company intro); the full text stays on the job board.
+    add(s, SM + 'jobDescription', str(truncate(roleExcerpt(job.description), STORED_DESCRIPTION_LENGTH)))
     add(s, SM + 'postedBy', org)
     add(s, SM + 'jobSource', str(job.source))
     add(s, SM + 'jobUrl', typed(job.url, 'anyURI'))

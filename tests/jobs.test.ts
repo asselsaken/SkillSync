@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { normalizeAshby, normalizeGreenhouse, normalizeLever } from '../lib/jobs/boards'
 import { jobsToQuads, tagSkills } from '../lib/jobs/rdf'
-import { htmlToText, isRelevantRole, splitSections, truncate } from '../lib/jobs/text'
+import { htmlToText, isRelevantRole, roleExcerpt, splitSections, truncate } from '../lib/jobs/text'
 import { Company } from '../lib/jobs/types'
 import { MemoryGraphStore } from '../lib/rdf/store'
 import { ONTOLOGY_DIR, ONTOLOGY_FILES, readTurtleFile, validateQuads } from '../lib/rdf/shacl'
@@ -144,5 +144,22 @@ describe('"any of" requirements in postings', () => {
     expect(quads.some((q) => q.predicate.value.endsWith('#requiresOneOf'))).toBe(true)
     const report = await validateQuads([...ONTOLOGY_FILES.flatMap((f) => readTurtleFile(f)), ...quads])
     expect(report.violations).toEqual([])
+  })
+})
+
+describe('role excerpts', () => {
+  it('starts at the role heading, skipping the company intro', () => {
+    const text = 'About Acme\nAcme builds rockets for everyone.\nAbout the role\nYou will build our data platform and own its reliability.\nBenefits\nFree lunch.'
+    expect(roleExcerpt(text)).toBe('You will build our data platform and own its reliability.')
+  })
+
+  it('falls back to the first sentence about the role', () => {
+    const text = 'Acme is the leading rocket company. We are looking for a Data Engineer to build pipelines for launch telemetry.'
+    expect(roleExcerpt(text)).toBe('We are looking for a Data Engineer to build pipelines for launch telemetry.')
+  })
+
+  it('never picks text from the benefits section', () => {
+    const text = 'Acme builds rockets and launch systems for the world.\nBenefits\nIn this role you may be eligible for a bonus.'
+    expect(roleExcerpt(text)).toBe('Acme builds rockets and launch systems for the world.')
   })
 })
