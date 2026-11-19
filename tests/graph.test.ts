@@ -34,7 +34,19 @@ describe('SHACL validation', () => {
     expect(report.valid).toBe(false)
     const paths = report.violations.map((v) => v.path)
     expect(paths).toContain('http://skillmatch.org/ontology#jobTitle')
-    expect(paths).toContain('http://skillmatch.org/ontology#requiresSkill')
+    expect(report.violations.some((v) => /at least one skill or skill group/.test(v.message))).toBe(true)
+  })
+
+  it('accepts a job that only has an "any of" group, and rejects a one-member group', async () => {
+    const job = (members: string) => parseTurtle(`${PREFIXES}
+      org:acme a sm:Organization ; sm:organizationName "Acme" .
+      job:g a sm:JobPosting ; sm:jobTitle "Cloud Engineer" ; sm:postedBy org:acme ;
+        sm:jobDescription "Run our infrastructure on any major cloud provider, at scale." ;
+        sm:requiresOneOf job:g-any-1 .
+      job:g-any-1 a sm:SkillGroup ; sm:groupMember ${members} .`)
+    const base = SAMPLE_FILES.slice(0, 2).flatMap((f) => readTurtleFile(f))
+    expect((await validateQuads([...base, ...job('skill:aws, skill:gcp')])).valid).toBe(true)
+    expect((await validateQuads([...base, ...job('skill:aws')])).valid).toBe(false)
   })
 
   it('rejects a skill that is similar to itself (SHACL-SPARQL constraint)', async () => {
@@ -72,7 +84,7 @@ describe('skill reasoning', () => {
       }
     }
     for (const job of await store.getAllJobPostings()) {
-      for (const ref of job.requiredSkills) expect(ids, `${job.id} -> ${ref}`).toContain(ref)
+      for (const ref of [...job.requiredSkills, ...(job.requiredGroups ?? []).flat()]) expect(ids, `${job.id} -> ${ref}`).toContain(ref)
     }
   })
 })
@@ -98,6 +110,20 @@ describe('job scoring', () => {
     expect(score).toBe(71)
     expect(matchedSkills.map((m) => m.matchType).sort()).toEqual(['exact', 'exact', 'narrower'])
     expect(missingSkills).toEqual(['Kubernetes'])
+  })
+
+  it('counts an "any of" group as one requirement met by any member', async () => {
+    const names = new Map((await store.getAllSkills()).map((s) => [s.id, s.name]))
+    const relate = (p: string, j: string) => store.areSkillsRelated(p, j)
+    const cloudJob = { ...job, requiredSkills: ['python'], requiredGroups: [['aws', 'gcp', 'azure']] }
+
+    const gcpOnly = await scoreJob(cloudJob, ['python', 'gcp'], names, relate)
+    expect(gcpOnly.score).toBe(100)
+    expect(gcpOnly.matchedSkills.map((m) => m.jobSkillName)).toContain('AWS / GCP / Azure')
+
+    const noCloud = await scoreJob(cloudJob, ['python'], names, relate)
+    expect(noCloud.score).toBe(50)
+    expect(noCloud.missingSkills).toEqual(['AWS / GCP / Azure'])
   })
 
   it('does not let one candidate skill inflate the score', async () => {

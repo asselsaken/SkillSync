@@ -69,6 +69,9 @@ function previousQuadsFor(slugs: Set<string>): N3.Quad[] {
     kept.push(...store.getQuads(org, null, null, null))
     for (const job of store.getSubjects(N3.DataFactory.namedNode(PREFIXES.sm + 'postedBy'), org, null)) {
       kept.push(...store.getQuads(job, null, null, null))
+      for (const group of store.getObjects(job, N3.DataFactory.namedNode(PREFIXES.sm + 'requiresOneOf'), null)) {
+        kept.push(...store.getQuads(group, null, null, null))
+      }
     }
   }
   return kept

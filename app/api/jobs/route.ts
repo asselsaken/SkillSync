@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getGraphStore } from '../../../lib/rdf/graph-store'
-import { generateSummary } from '../../../lib/rdf/semantic-matcher'
+import { generateSummary, requirementLabels } from '../../../lib/rdf/semantic-matcher'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
           job.title.toLowerCase().includes(q) ||
           job.organization.toLowerCase().includes(q) ||
           (job.location ?? '').toLowerCase().includes(q) ||
-          namesOf(job.requiredSkills).some((s) => s.toLowerCase().includes(q))
+          requirementLabels(job, skillNames).some((s) => s.toLowerCase().includes(q))
         )
       })
       .sort((a, b) => (b.datePosted ?? '').localeCompare(a.datePosted ?? '') || a.title.localeCompare(b.title))
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       department: job.department,
       employmentType: job.employmentType,
       salary: job.salary,
-      skills: namesOf(job.requiredSkills),
+      skills: requirementLabels(job, skillNames),
       preferredSkills: namesOf(job.preferredSkills),
       summary: generateSummary(job.description, 300),
       url: job.url,

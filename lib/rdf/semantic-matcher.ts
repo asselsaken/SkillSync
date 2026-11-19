@@ -90,15 +90,14 @@ interface Span {
   skill: RDFSkill
 }
 
-/**
- * Return the ids of ontology skills mentioned by name or alias in `text`.
- *
- * - A match inside a longer match is dropped: "A/B testing" yields A/B Testing,
- *   not also the generic Testing. Partially overlapping matches both count.
- * - Of skills declared equivalent (e.g. LLMs ≡ Large Language Models) only the
- *   first mentioned is kept, so one concept is not counted twice.
- */
-export function extractSkillIds(text: string, skills: RDFSkill[]): string[] {
+export interface SkillMention {
+  id: string
+  start: number
+  end: number
+}
+
+/** Like extractSkillIds, but returns every mention with its position, in text order. */
+export function extractSkillMentions(text: string, skills: RDFSkill[]): SkillMention[] {
   const lower = text.toLowerCase()
   const spans: Span[] = []
 
@@ -129,23 +128,47 @@ export function extractSkillIds(text: string, skills: RDFSkill[]): string[] {
     if (!inside) kept.push(span)
   }
 
-  // First mention order, collapsing equivalent skills.
+  // Text order; of equivalent skills only the first mentioned is used.
   kept.sort((a, b) => a.start - b.start)
-  const found: RDFSkill[] = []
+  const canonical = new Map<string, string>() // skill id -> id it is reported as
+  const reported: RDFSkill[] = []
   for (const { skill } of kept) {
-    if (found.some((f) => f.id === skill.id)) continue
-    const isEquivalent = found.some((f) => f.equivalentSkills.includes(skill.id) || skill.equivalentSkills.includes(f.id))
-    if (!isEquivalent) found.push(skill)
+    if (canonical.has(skill.id)) continue
+    const equivalent = reported.find((r) => r.equivalentSkills.includes(skill.id) || skill.equivalentSkills.includes(r.id))
+    canonical.set(skill.id, equivalent?.id ?? skill.id)
+    if (!equivalent) reported.push(skill)
   }
-  return found.map((s) => s.id)
+  return kept.map((k) => ({ id: canonical.get(k.skill.id) ?? k.skill.id, start: k.start, end: k.end }))
+}
+
+/**
+ * Return the ids of ontology skills mentioned by name or alias in `text`.
+ *
+ * - A match inside a longer match is dropped: "A/B testing" yields A/B Testing,
+ *   not also the generic Testing. Partially overlapping matches both count.
+ * - Of skills declared equivalent (e.g. LLMs ≡ Large Language Models) only the
+ *   first mentioned is kept, so one concept is not counted twice.
+ */
+export function extractSkillIds(text: string, skills: RDFSkill[]): string[] {
+  return [...new Set(extractSkillMentions(text, skills).map((m) => m.id))]
 }
 
 // ------------------------------------------------------------------ scoring
 
+/** Requirements of a job: each is a list of alternatives (a single skill is a list of one). */
+export function requirementsOf(job: RDFJobPosting): string[][] {
+  return [...job.requiredSkills.map((id) => [id]), ...(job.requiredGroups ?? [])]
+}
+
+/** Human-readable requirement labels: "Python", "AWS / GCP / Azure". */
+export function requirementLabels(job: RDFJobPosting, skillNames: Map<string, string>): string[] {
+  return requirementsOf(job).map((alts) => alts.map((id) => skillNames.get(id) ?? id).join(' / '))
+}
+
 /**
- * Score one job: for each required skill take the candidate's strongest
- * related skill, then normalise by the number of required skills so that
- * missing requirements lower the score.
+ * Score one job: for each requirement take the candidate's strongest related
+ * skill (for an "any of" group, against any member), then normalise by the
+ * number of requirements so that missing ones lower the score.
  */
 export async function scoreJob(
   job: RDFJobPosting,
@@ -155,32 +178,36 @@ export async function scoreJob(
 ): Promise<{ score: number; rankScore: number; matchedSkills: SkillMatchDetail[]; missingSkills: string[] }> {
   const matchedSkills: SkillMatchDetail[] = []
   const missingSkills: string[] = []
+  const name = (id: string) => skillNames.get(id) ?? id
+  const requirements = requirementsOf(job)
 
-  for (const jobSkillId of job.requiredSkills) {
-    let best: { personSkillId: string; relation: SkillRelation } | null = null
-    for (const personSkillId of personSkillIds) {
-      const relation = await relate(personSkillId, jobSkillId)
-      if (relation.related && (!best || relation.weight > best.relation.weight)) {
-        best = { personSkillId, relation }
-        if (relation.weight >= 1) break
+  for (const alternatives of requirements) {
+    let best: { personSkillId: string; jobSkillId: string; relation: SkillRelation } | null = null
+    search: for (const jobSkillId of alternatives) {
+      for (const personSkillId of personSkillIds) {
+        const relation = await relate(personSkillId, jobSkillId)
+        if (relation.related && (!best || relation.weight > best.relation.weight)) {
+          best = { personSkillId, jobSkillId, relation }
+          if (relation.weight >= 1) break search
+        }
       }
     }
 
     if (best && best.relation.type !== 'none') {
       matchedSkills.push({
         personSkillUri: PREFIXES.skill + best.personSkillId,
-        personSkillName: skillNames.get(best.personSkillId) ?? best.personSkillId,
-        jobSkillUri: PREFIXES.skill + jobSkillId,
-        jobSkillName: skillNames.get(jobSkillId) ?? jobSkillId,
+        personSkillName: name(best.personSkillId),
+        jobSkillUri: PREFIXES.skill + best.jobSkillId,
+        jobSkillName: alternatives.length > 1 ? alternatives.map(name).join(' / ') : name(best.jobSkillId),
         matchType: best.relation.type,
         weight: best.relation.weight,
       })
     } else {
-      missingSkills.push(skillNames.get(jobSkillId) ?? jobSkillId)
+      missingSkills.push(alternatives.map(name).join(' / '))
     }
   }
 
-  const total = job.requiredSkills.length
+  const total = requirements.length
   const weighted = matchedSkills.reduce((sum, m) => sum + m.weight, 0)
   const score = total > 0 ? Math.min(100, Math.round((weighted / total) * 100)) : 0
   const rankScore = Math.round((weighted / (total + RANKING_PRIOR)) * 100)
@@ -261,7 +288,7 @@ class SemanticMatcher {
         title: job.title,
         company: job.organization,
         location: job.location || 'Remote',
-        skills: job.requiredSkills.map((id) => skillNames.get(id) ?? id),
+        skills: requirementLabels(job, skillNames),
         description: job.description,
         url: job.url,
         applyUrl: job.applyUrl ?? job.url,

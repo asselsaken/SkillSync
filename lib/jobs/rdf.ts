@@ -6,6 +6,7 @@ import * as N3 from 'n3'
 import { extractSkillIds } from '../rdf/semantic-matcher'
 import { PREFIXES, RDFSkill } from '../rdf/types'
 import { EnrichedJob, NormalizedJob } from './types'
+import { analyseRequirements } from './groups'
 import { splitSections, truncate } from './text'
 
 const { namedNode, literal, quad } = N3.DataFactory
@@ -30,15 +31,15 @@ export function tagSkills(job: NormalizedJob, allSkills: RDFSkill[]): EnrichedJo
   const company = job.company.name.toLowerCase()
   const skills = allSkills.filter((s) => !s.isCategory && !company.startsWith(s.name.toLowerCase()))
   const { required, preferred } = splitSections(job.description)
-  const requiredSkills = extractSkillIds(`${job.title}\n${required}`, skills)
-  const requiredSet = new Set(requiredSkills)
+  const { singles, groups } = analyseRequirements(`${job.title}\n${required}`, skills)
+  const requiredSet = new Set([...singles, ...groups.flat()])
   const preferredSkills = extractSkillIds(preferred, skills).filter((id) => !requiredSet.has(id))
 
   // A posting must require at least one skill; if everything was "nice to have", promote it.
-  if (requiredSkills.length === 0 && preferredSkills.length > 0) {
-    return { ...job, requiredSkills: preferredSkills, preferredSkills: [] }
+  if (singles.length === 0 && groups.length === 0 && preferredSkills.length > 0) {
+    return { ...job, requiredSkills: preferredSkills, requiredGroups: [], preferredSkills: [] }
   }
-  return { ...job, requiredSkills, preferredSkills }
+  return { ...job, requiredSkills: singles, requiredGroups: groups, preferredSkills }
 }
 
 const orgUri = (slug: string) => namedNode(PREFIXES.org + slug)
@@ -76,6 +77,12 @@ export function jobsToQuads(jobs: EnrichedJob[]): N3.Quad[] {
     if (job.datePosted) add(s, SM + 'datePosted', typed(job.datePosted, 'date'))
     if (job.salary) add(s, SM + 'salary', str(job.salary))
     for (const id of job.requiredSkills) add(s, SM + 'requiresSkill', skillUri(id))
+    job.requiredGroups.forEach((members, i) => {
+      const group = jobUri(`${job.id}--any-${i + 1}`)
+      add(s, SM + 'requiresOneOf', group)
+      add(group, PREFIXES.rdf + 'type', namedNode(SM + 'SkillGroup'))
+      for (const id of members) add(group, SM + 'groupMember', skillUri(id))
+    })
     for (const id of job.preferredSkills) add(s, SM + 'prefersSkill', skillUri(id))
   }
   return quads

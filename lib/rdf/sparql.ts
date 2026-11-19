@@ -237,7 +237,7 @@ class SPARQLEngine {
     const results: { job: RDFJobPosting; matchType: string; weight: number }[] = []
     for (const job of await store.getAllJobPostings()) {
       let best: { matchType: string; weight: number } | null = null
-      for (const requiredSkillId of job.requiredSkills) {
+      for (const requiredSkillId of [...job.requiredSkills, ...(job.requiredGroups ?? []).flat()]) {
         const relation = await store.areSkillsRelated(skill.id, requiredSkillId)
         if (relation.related && (!best || relation.weight > best.weight)) {
           best = { matchType: relation.type, weight: relation.weight }

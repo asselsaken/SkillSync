@@ -1,7 +1,7 @@
 {
   "fetchedAt": "2026-11-19T03:38:02.895Z",
-  "retaggedAt": "2026-11-19T03:39:40.990Z",
-  "jobs": 5446,
+  "retaggedAt": "2026-11-19T04:21:56.049Z",
+  "jobs": 5433,
   "companies": [
     {
       "slug": "affirm",
@@ -33,7 +33,7 @@
       "ok": true,
       "fetched": 300,
       "relevant": 300,
-      "kept": 286
+      "kept": 285
     },
     {
       "slug": "asana",
@@ -105,7 +105,7 @@
       "ok": true,
       "fetched": 26,
       "relevant": 26,
-      "kept": 26
+      "kept": 25
     },
     {
       "slug": "databricks",
@@ -113,7 +113,7 @@
       "ok": true,
       "fetched": 508,
       "relevant": 508,
-      "kept": 497
+      "kept": 495
     },
     {
       "slug": "datadog",
@@ -185,7 +185,7 @@
       "ok": true,
       "fetched": 98,
       "relevant": 98,
-      "kept": 94
+      "kept": 93
     },
     {
       "slug": "gusto",
@@ -273,7 +273,7 @@
       "ok": true,
       "fetched": 181,
       "relevant": 181,
-      "kept": 181
+      "kept": 180
     },
     {
       "slug": "openai",
@@ -281,7 +281,7 @@
       "ok": true,
       "fetched": 446,
       "relevant": 446,
-      "kept": 433
+      "kept": 429
     },
     {
       "slug": "outreach",
@@ -457,7 +457,7 @@
       "ok": true,
       "fetched": 234,
       "relevant": 234,
-      "kept": 220
+      "kept": 219
     },
     {
       "slug": "supabase",
@@ -489,7 +489,7 @@
       "ok": true,
       "fetched": 22,
       "relevant": 22,
-      "kept": 22
+      "kept": 20
     },
     {
       "slug": "vanta",

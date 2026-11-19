@@ -27,5 +27,6 @@ export interface NormalizedJob {
 /** A job with skills resolved against the ontology. */
 export interface EnrichedJob extends NormalizedJob {
   requiredSkills: string[]
+  requiredGroups: string[][] // "any of" requirements
   preferredSkills: string[]
 }

@@ -124,6 +124,7 @@ export class MemoryGraphStore implements GraphStore {
         url: this.value(uri, SM + 'jobUrl'),
         organization: orgNames.get(orgUri) ?? '',
         requiredSkills: this.skillIds(uri, SM + 'requiresSkill'),
+        requiredGroups: this.values(uri, SM + 'requiresOneOf').map((g) => this.skillIds(g, SM + 'groupMember')),
         preferredSkills: this.skillIds(uri, SM + 'prefersSkill'),
         datePosted: this.value(uri, SM + 'datePosted'),
         applyUrl: this.value(uri, SM + 'applyUrl'),

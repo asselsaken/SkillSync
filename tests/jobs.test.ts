@@ -129,3 +129,20 @@ describe('employer self-mentions', () => {
     expect(tagged.requiredSkills).toEqual(expect.arrayContaining(['python', 'spark']))
   })
 })
+
+describe('"any of" requirements in postings', () => {
+  it('tags alternatives as a group and serialises valid RDF', async () => {
+    const [job] = normalizeGreenhouse(acme, {
+      jobs: [{ id: 7, title: 'Platform Engineer', absolute_url: 'https://example.com/7',
+        content: 'Requirements\n• Python and Kubernetes\n• Experience with AWS, GCP, or Azure' }],
+    })
+    const tagged = tagSkills(job, skills)
+    expect(tagged.requiredSkills).toEqual(expect.arrayContaining(['python', 'kubernetes']))
+    expect(tagged.requiredGroups).toEqual([['aws', 'gcp', 'azure']])
+
+    const quads = jobsToQuads([tagged])
+    expect(quads.some((q) => q.predicate.value.endsWith('#requiresOneOf'))).toBe(true)
+    const report = await validateQuads([...ONTOLOGY_FILES.flatMap((f) => readTurtleFile(f)), ...quads])
+    expect(report.violations).toEqual([])
+  })
+})

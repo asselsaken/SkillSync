@@ -106,15 +106,25 @@ smshape:JobPostingShape
         sh:message "Job posting must have a description (at least 50 characters)"@en ;
     ] ;
     
-    # Required: At least one required skill
+    # Required: at least one required skill or one "any of" skill group
+    sh:or (
+        [ sh:path sm:requiresSkill ; sh:minCount 1 ]
+        [ sh:path sm:requiresOneOf ; sh:minCount 1 ]
+    ) ;
+    sh:message "Job posting must require at least one skill or skill group"@en ;
     sh:property [
         sh:path sm:requiresSkill ;
         sh:name "requires skill" ;
         sh:description "Skills required for the job" ;
         sh:class sm:Skill ;
-        sh:minCount 1 ;
         sh:severity sh:Violation ;
-        sh:message "Job posting must require at least one skill"@en ;
+        sh:message "requiresSkill must reference Skill entities"@en ;
+    ] ;
+    sh:property [
+        sh:path sm:requiresOneOf ;
+        sh:class sm:SkillGroup ;
+        sh:severity sh:Violation ;
+        sh:message "requiresOneOf must reference SkillGroup entities"@en ;
     ] ;
     
     # Optional: Preferred skills
@@ -379,3 +389,17 @@ smshape:SkillWeightShape
         sh:message "Skill weight must be between 0 and 1"@en ;
     ] .
 
+# -----------------------------------------------------------------------------
+# Skill Group Shape - "any of" requirements
+# -----------------------------------------------------------------------------
+smshape:SkillGroupShape
+    a sh:NodeShape ;
+    sh:targetClass sm:SkillGroup ;
+    rdfs:label "Skill Group Shape"@en ;
+    sh:property [
+        sh:path sm:groupMember ;
+        sh:class sm:Skill ;
+        sh:minCount 2 ;
+        sh:severity sh:Violation ;
+        sh:message "A skill group needs at least two Skill members"@en ;
+    ] .

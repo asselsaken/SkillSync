@@ -66,6 +66,8 @@ export interface RDFJobPosting {
   url?: string
   organization: string
   requiredSkills: string[]
+  /** "Any of" requirements: each inner list is satisfied by any one member */
+  requiredGroups?: string[][]
   preferredSkills: string[]
   datePosted?: string
   applyUrl?: string
