@@ -156,3 +156,16 @@ describe('named SPARQL queries', () => {
     expect((await store.executeSPARQL(SPARQL_QUERIES.ALL_SKILLS)).length).toBeGreaterThan(50)
   })
 })
+
+describe('collapseDuplicates', () => {
+  it('keeps the best-ranked posting per company and title and lists other locations', async () => {
+    const { collapseDuplicates } = await import('../lib/rdf/semantic-matcher')
+    const m = (id: string, title: string, location: string) => ({
+      id, title, company: 'Acme', location, skills: [], description: '', matchScore: 90, summary: '',
+      reasons: [], matchedSkills: [], missingSkills: [], rankScore: 70,
+    })
+    const out = collapseDuplicates([m('1', 'Data Engineer', 'NYC'), m('2', 'ML Engineer', 'NYC'), m('3', 'Data Engineer', 'London'), m('4', 'data engineer', 'NYC')])
+    expect(out.map((j) => j.id)).toEqual(['1', '2'])
+    expect(out[0].otherLocations).toEqual(['London'])
+  })
+})

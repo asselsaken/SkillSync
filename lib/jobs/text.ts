@@ -50,6 +50,11 @@ export function isRelevantRole(title: string): boolean {
 
 // ------------------------------------------------------------------ sections
 
+/** "BS/MS in Computer Science, Statistics or Operations Research": fields of study, not skills. */
+const DEGREE_LINE = /\b(degree|bachelor['’]?s?|master['’]?s?|ph\.?\s?d|doctorate|b\.?s\.?c?|m\.?s\.?c?|b\.?a\.?|m\.?eng|diploma)\b[^\n]*\b(in|of)\b/i
+
+export const isDegreeLine = (line: string) => DEGREE_LINE.test(line)
+
 const HEADING_MAX_LENGTH = 80
 
 const PREFERRED_HEADING =

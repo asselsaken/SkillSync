@@ -28,6 +28,23 @@ export interface MatchedJob {
   missingSkills: string[]
   /** Ranking key: coverage smoothed so jobs with very few detected requirements don't dominate */
   rankScore: number
+  /** Other locations of the same role (same company and title), collapsed into this match */
+  otherLocations?: string[]
+}
+
+/**
+ * Companies often post one role per city. Keep the best-ranked posting per
+ * (company, title) and list the other locations on it. Input must be ranked.
+ */
+export function collapseDuplicates(matches: MatchedJob[]): MatchedJob[] {
+  const byRole = new Map<string, MatchedJob>()
+  for (const m of matches) {
+    const key = `${m.company}|${m.title}`.toLowerCase()
+    const first = byRole.get(key)
+    if (!first) byRole.set(key, { ...m, otherLocations: [] })
+    else if (m.location && m.location !== first.location && !first.otherLocations!.includes(m.location)) first.otherLocations!.push(m.location)
+  }
+  return [...byRole.values()]
 }
 
 /**
@@ -41,7 +58,8 @@ type RelateFn = (personSkillId: string, jobSkillId: string) => Promise<SkillRela
 
 // ------------------------------------------------------------------ extraction
 
-const escapeRegex = (s: string) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
+// Escapes regex syntax; valid in unicode mode ("-" needs no escape outside a class)
+const escapeRegex = (s: string) => s.replace(/[/\\^$*+?.()|[\]{}]/g, '\\$&')
 
 const patternCache = new Map<string, RegExp>()
 
@@ -57,7 +75,8 @@ function termPattern(term: string): RegExp {
   const key = term.toLowerCase()
   let pattern = patternCache.get(key)
   if (!pattern) {
-    pattern = new RegExp(`(^|[^a-z0-9+.#])${escapeRegex(key)}(?=$|[^a-z0-9+#]|\\.(?:$|[^a-z0-9]))`, 'g')
+    // \p{L}: letters of any script, so the "r" in "résumé" is not the R language
+    pattern = new RegExp(`(^|[^\\p{L}\\p{N}+.#])${escapeRegex(key)}(?=$|[^\\p{L}\\p{N}+#]|\\.(?:$|[^\\p{L}\\p{N}]))`, 'gu')
     patternCache.set(key, pattern)
   }
   return pattern
@@ -71,7 +90,7 @@ function caseSensitivePattern(term: string): RegExp {
   const key = `cs:${term}`
   let pattern = patternCache.get(key)
   if (!pattern) {
-    pattern = new RegExp(`(^|[^A-Za-z0-9+.#])${escapeRegex(term)}(?=$|[^A-Za-z0-9+#-]|\\.(?:$|[^A-Za-z0-9]))`, 'g')
+    pattern = new RegExp(`(^|[^\\p{L}\\p{N}+.#])${escapeRegex(term)}(?=$|[^\\p{L}\\p{N}+#-]|\\.(?:$|[^\\p{L}\\p{N}]))`, 'gu')
     patternCache.set(key, pattern)
   }
   return pattern
@@ -81,7 +100,9 @@ export function containsWholeTerm(text: string, term: string): boolean {
   if (!term) return false
   const pattern = termPattern(term)
   pattern.lastIndex = 0
-  return pattern.test(text.toLowerCase())
+  const found = pattern.test(text.toLowerCase())
+  pattern.lastIndex = 0
+  return found
 }
 
 interface Span {
@@ -102,6 +123,7 @@ export function extractSkillMentions(text: string, skills: RDFSkill[]): SkillMen
   const spans: Span[] = []
 
   const addMatches = (source: string, term: string, pattern: RegExp, skill: RDFSkill) => {
+    pattern.lastIndex = 0 // cached global regexes keep their position; matchAll copies it
     for (const m of source.matchAll(pattern)) {
       const start = (m.index ?? 0) + m[1].length
       spans.push({ start, end: start + term.length, skill })

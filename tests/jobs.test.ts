@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { normalizeAshby, normalizeGreenhouse, normalizeLever } from '../lib/jobs/boards'
 import { jobsToQuads, tagSkills } from '../lib/jobs/rdf'
-import { htmlToText, isRelevantRole, roleExcerpt, splitSections, truncate } from '../lib/jobs/text'
+import { htmlToText, isDegreeLine, isRelevantRole, roleExcerpt, splitSections, truncate } from '../lib/jobs/text'
 import { Company } from '../lib/jobs/types'
 import { MemoryGraphStore } from '../lib/rdf/store'
 import { ONTOLOGY_DIR, ONTOLOGY_FILES, readTurtleFile, validateQuads } from '../lib/rdf/shacl'
@@ -161,5 +161,14 @@ describe('role excerpts', () => {
   it('never picks text from the benefits section', () => {
     const text = 'Acme builds rockets and launch systems for the world.\nBenefits\nIn this role you may be eligible for a bonus.'
     expect(roleExcerpt(text)).toBe('Acme builds rockets and launch systems for the world.')
+  })
+})
+
+describe('degree lines', () => {
+  it('does not read fields of study as skills', () => {
+    expect(isDegreeLine('• MS or PhD in Computer Science, Statistics, Operations Research or a related field')).toBe(true)
+    expect(isDegreeLine("Bachelor's degree in Mathematics")).toBe(true)
+    expect(isDegreeLine('• 5+ years of Python and SQL')).toBe(false)
+    expect(isDegreeLine('Experience with MS SQL Server')).toBe(false)
   })
 })

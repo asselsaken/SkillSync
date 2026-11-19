@@ -1,7 +1,7 @@
 {
   "fetchedAt": "2026-11-19T03:38:02.895Z",
-  "retaggedAt": "2026-11-19T04:23:49.013Z",
-  "jobs": 5433,
+  "retaggedAt": "2026-11-19T04:29:26.481Z",
+  "jobs": 5432,
   "companies": [
     {
       "slug": "affirm",
@@ -537,7 +537,7 @@
       "ok": true,
       "fetched": 150,
       "relevant": 150,
-      "kept": 144
+      "kept": 143
     }
   ]
 }

@@ -118,3 +118,11 @@ describe('generateSummary', () => {
     expect(generateSummary('• Build APIs\n• Own on-call rotations')).toBe('Build APIs. Own on-call rotations.')
   })
 })
+
+describe('non-English letters', () => {
+  it('treats accented letters as part of a word', () => {
+    expect(containsWholeTerm('Sample résumé', 'R')).toBe(false)
+    expect(containsWholeTerm('Analyse in R und Python', 'R')).toBe(true)
+    expect(extractSkillIds('Expérience: Python, SQL', [skill('python', 'Python'), skill('sql', 'SQL')]).sort()).toEqual(['python', 'sql'])
+  })
+})

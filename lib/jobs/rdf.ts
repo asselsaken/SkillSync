@@ -7,7 +7,7 @@ import { extractSkillIds } from '../rdf/semantic-matcher'
 import { PREFIXES, RDFSkill } from '../rdf/types'
 import { EnrichedJob, NormalizedJob } from './types'
 import { analyseRequirements } from './groups'
-import { roleExcerpt, splitSections, truncate } from './text'
+import { isDegreeLine, roleExcerpt, splitSections, truncate } from './text'
 
 const { namedNode, literal, quad } = N3.DataFactory
 const SM = PREFIXES.sm
@@ -31,7 +31,9 @@ export function tagSkills(job: NormalizedJob, allSkills: RDFSkill[]): EnrichedJo
   const company = job.company.name.toLowerCase()
   const skills = allSkills.filter((s) => !s.isCategory && !company.startsWith(s.name.toLowerCase()))
   const { required, preferred } = splitSections(job.description)
-  const { singles, groups } = analyseRequirements(`${job.title}\n${required}`, skills)
+  // Degree lines list fields of study ("MS in Statistics or Operations Research"), not skills
+  const requirementText = required.split('\n').filter((l) => !isDegreeLine(l)).join('\n')
+  const { singles, groups } = analyseRequirements(`${job.title}\n${requirementText}`, skills)
   const requiredSet = new Set([...singles, ...groups.flat()])
   const preferredSkills = extractSkillIds(preferred, skills).filter((id) => !requiredSet.has(id))
 

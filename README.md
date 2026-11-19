@@ -6,7 +6,7 @@ Unlike keyword search, SkillMatch understands how skills relate: if a job asks f
 
 ## How it works
 
-1. **Extract**: the résumé text is scanned for every skill name and alias in the ontology, using token-boundary matching (so "R" isn't found inside "for", and "Java" isn't found inside "JavaScript").
+1. **Extract**: the résumé text is scanned for every skill name and alias in the ontology, using Unicode-aware token boundaries (so "R" isn't found inside "for" or "résumé", and "Java" isn't found inside "JavaScript"). Ambiguous names like "Go" match only with exact capitalisation.
 2. **Relate**: for each skill a job requires, the candidate's strongest related skill is found in the graph:
 
    | Relation | Example | Weight |
@@ -18,8 +18,11 @@ Unlike keyword search, SkillMatch understands how skills relate: if a job asks f
    | similar | PyTorch ≈ TensorFlow | 0.6 |
    | broader (you're more general) | SQL → PostgreSQL | 0.5 |
 
-3. **Score**: the weights are summed and divided by the number of required skills, so missing requirements lower the score. Each result lists the matched skills, how each one matched, and what's missing.
-4. **Rank**: results are ordered by a smoothed score, `weighted / (required + 3)`, so a posting where only one skill was detected doesn't outrank one where 8 of 9 requirements match.
+3. **Score**: the weights are summed and divided by the number of requirements, so missing requirements lower the score. "Any of" requirements ("AWS, GCP, or Azure", "e.g. Python, Java") are one requirement met by any member (`sm:requiresOneOf` → `sm:SkillGroup`). Each result lists every requirement, how it was met, and what's missing.
+4. **Rank**: results are ordered by a smoothed score, `weighted / (requirements + 3)`, so a posting where only one skill was detected doesn't outrank one where 8 of 9 requirements match. The same role posted in several cities is shown once, with its other locations.
+5. **Advise**: the requirements missing most often across your top matches are shown as "skills that would open the most doors".
+
+Try it without a résumé: the home page has three sample résumés (data, backend and ML engineer). Uploaded résumés are parsed in memory and never stored.
 
 ## Job data
 
