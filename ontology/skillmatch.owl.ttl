@@ -43,6 +43,11 @@ sm:JobPosting
     rdfs:comment "A job posting or listing from an employer"@en ;
     rdfs:subClassOf schema:JobPosting .
 
+sm:SkillGroup
+    a owl:Class ;
+    rdfs:label "Skill Group"@en ;
+    rdfs:comment "A set of alternative skills, any one of which satisfies a requirement (e.g. AWS, GCP or Azure)"@en .
+
 # -----------------------------------------------------------------------------
 # Skill Class - Represents skills (technical or soft)
 # -----------------------------------------------------------------------------
@@ -99,6 +104,19 @@ sm:requiresSkill
     rdfs:label "requires skill"@en ;
     rdfs:comment "Indicates that a job posting requires a particular skill"@en ;
     rdfs:domain sm:JobPosting ;
+    rdfs:range sm:Skill .
+
+sm:requiresOneOf
+    a owl:ObjectProperty ;
+    rdfs:label "requires one of"@en ;
+    rdfs:comment "The job requires at least one skill from the group"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range sm:SkillGroup .
+
+sm:groupMember
+    a owl:ObjectProperty ;
+    rdfs:label "group member"@en ;
+    rdfs:domain sm:SkillGroup ;
     rdfs:range sm:Skill .
 
 sm:prefersSkill
@@ -236,6 +254,39 @@ sm:datePosted
     rdfs:domain sm:JobPosting ;
     rdfs:range xsd:date .
 
+sm:applyUrl
+    a owl:DatatypeProperty ;
+    rdfs:label "apply URL"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:anyURI .
+
+sm:isRemote
+    a owl:DatatypeProperty ;
+    rdfs:label "is remote"@en ;
+    rdfs:comment "True if the position can be done fully remotely"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:boolean .
+
+sm:department
+    a owl:DatatypeProperty ;
+    rdfs:label "department"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:employmentType
+    a owl:DatatypeProperty ;
+    rdfs:label "employment type"@en ;
+    rdfs:comment "e.g. Full-time, Part-time, Contract, Internship"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
+sm:jobSource
+    a owl:DatatypeProperty ;
+    rdfs:label "job source"@en ;
+    rdfs:comment "Job board the posting was collected from (greenhouse, lever, ashby)"@en ;
+    rdfs:domain sm:JobPosting ;
+    rdfs:range xsd:string .
+
 # -----------------------------------------------------------------------------
 # Skill properties
 # -----------------------------------------------------------------------------
@@ -257,6 +308,33 @@ sm:skillDescription
     rdfs:label "skill description"@en ;
     rdfs:domain sm:Skill ;
     rdfs:range xsd:string .
+
+sm:caseSensitive
+    a owl:DatatypeProperty ;
+    rdfs:label "case sensitive"@en ;
+    rdfs:comment "If true, the skill name only matches with its exact capitalisation (e.g. \"Go\" but not the verb \"go\")"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:boolean .
+
+# Provenance for skills added by the automated review (scripts/apply-skill-proposals.ts)
+sm:addedBy
+    a owl:DatatypeProperty ;
+    rdfs:label "added by"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:string .
+
+sm:addedOn
+    a owl:DatatypeProperty ;
+    rdfs:label "added on"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:date .
+
+sm:evidencePostings
+    a owl:DatatypeProperty ;
+    rdfs:label "evidence postings"@en ;
+    rdfs:comment "Number of job postings that listed the skill when it was added"@en ;
+    rdfs:domain sm:Skill ;
+    rdfs:range xsd:integer .
 
 # -----------------------------------------------------------------------------
 # Organization properties

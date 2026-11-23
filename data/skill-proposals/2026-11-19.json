@@ -1,0 +1,1569 @@
+{
+  "reviewedAt": "2026-11-19",
+  "reviewer": "Claude Code (skill review)",
+  "newSkills": [
+    {
+      "id": "go",
+      "name": "Go",
+      "aliases": [
+        "golang"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "caseSensitive": true,
+      "description": "Statically typed compiled language from Google",
+      "evidencePostings": 593
+    },
+    {
+      "id": "java",
+      "name": "Java",
+      "aliases": [
+        "java 8",
+        "java 17"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "similar": [
+        "kotlin",
+        "scala"
+      ],
+      "evidencePostings": 505
+    },
+    {
+      "id": "cpp",
+      "name": "C++",
+      "aliases": [
+        "cpp",
+        "modern c++"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 330
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "aliases": [
+        "rust-lang",
+        "rustlang"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 179
+    },
+    {
+      "id": "scala",
+      "name": "Scala",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 169
+    },
+    {
+      "id": "kotlin",
+      "name": "Kotlin",
+      "aliases": [],
+      "broader": [
+        "programming-languages",
+        "mobile-development"
+      ],
+      "evidencePostings": 92
+    },
+    {
+      "id": "csharp",
+      "name": "C#",
+      "aliases": [
+        "c sharp",
+        "csharp"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 85
+    },
+    {
+      "id": "dotnet",
+      "name": ".NET",
+      "aliases": [
+        "dotnet",
+        ".net core",
+        "asp.net"
+      ],
+      "broader": [
+        "backend-development"
+      ],
+      "similar": [
+        "csharp"
+      ],
+      "evidencePostings": 15
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 114
+    },
+    {
+      "id": "ruby-on-rails",
+      "name": "Ruby on Rails",
+      "aliases": [
+        "ror"
+      ],
+      "broader": [
+        "ruby",
+        "backend-development"
+      ],
+      "evidencePostings": 14
+    },
+    {
+      "id": "bash",
+      "name": "Bash",
+      "aliases": [
+        "shell scripting",
+        "bash scripting"
+      ],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 118
+    },
+    {
+      "id": "powershell",
+      "name": "PowerShell",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 22
+    },
+    {
+      "id": "lua",
+      "name": "Lua",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 49
+    },
+    {
+      "id": "php",
+      "name": "PHP",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 21
+    },
+    {
+      "id": "perl",
+      "name": "Perl",
+      "aliases": [],
+      "broader": [
+        "programming-languages"
+      ],
+      "evidencePostings": 12
+    },
+    {
+      "id": "swift",
+      "name": "Swift",
+      "aliases": [
+        "swiftui"
+      ],
+      "broader": [
+        "programming-languages",
+        "mobile-development"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 27
+    },
+    {
+      "id": "objective-c",
+      "name": "Objective-C",
+      "aliases": [
+        "objc"
+      ],
+      "broader": [
+        "programming-languages",
+        "mobile-development"
+      ],
+      "evidencePostings": 10
+    },
+    {
+      "id": "mobile-development",
+      "name": "Mobile Development",
+      "aliases": [
+        "mobile engineering",
+        "mobile app development"
+      ],
+      "broader": [
+        "software-engineering"
+      ]
+    },
+    {
+      "id": "android",
+      "name": "Android",
+      "aliases": [
+        "android development"
+      ],
+      "broader": [
+        "mobile-development"
+      ],
+      "evidencePostings": 19
+    },
+    {
+      "id": "ios",
+      "name": "iOS",
+      "aliases": [
+        "ios development"
+      ],
+      "broader": [
+        "mobile-development"
+      ],
+      "evidencePostings": 14
+    },
+    {
+      "id": "infrastructure-as-code",
+      "name": "Infrastructure as Code",
+      "aliases": [
+        "iac",
+        "infrastructure-as-code"
+      ],
+      "broader": [
+        "devops"
+      ],
+      "evidencePostings": 37
+    },
+    {
+      "id": "terraform",
+      "name": "Terraform",
+      "aliases": [],
+      "broader": [
+        "infrastructure-as-code"
+      ],
+      "similar": [
+        "pulumi"
+      ],
+      "evidencePostings": 229
+    },
+    {
+      "id": "pulumi",
+      "name": "Pulumi",
+      "aliases": [],
+      "broader": [
+        "infrastructure-as-code"
+      ],
+      "evidencePostings": 59
+    },
+    {
+      "id": "cloudformation",
+      "name": "CloudFormation",
+      "aliases": [
+        "aws cloudformation"
+      ],
+      "broader": [
+        "infrastructure-as-code",
+        "aws"
+      ],
+      "evidencePostings": 11
+    },
+    {
+      "id": "ansible",
+      "name": "Ansible",
+      "aliases": [],
+      "broader": [
+        "infrastructure-as-code"
+      ],
+      "evidencePostings": 19
+    },
+    {
+      "id": "helm",
+      "name": "Helm",
+      "aliases": [
+        "helm charts"
+      ],
+      "broader": [
+        "kubernetes"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 19
+    },
+    {
+      "id": "argo-cd",
+      "name": "Argo CD",
+      "aliases": [
+        "argocd"
+      ],
+      "broader": [
+        "ci-cd",
+        "kubernetes"
+      ],
+      "evidencePostings": 28
+    },
+    {
+      "id": "gitops",
+      "name": "GitOps",
+      "aliases": [],
+      "broader": [
+        "devops"
+      ],
+      "evidencePostings": 16
+    },
+    {
+      "id": "buildkite",
+      "name": "Buildkite",
+      "aliases": [],
+      "broader": [
+        "ci-cd"
+      ],
+      "similar": [
+        "github-actions",
+        "jenkins"
+      ],
+      "evidencePostings": 43
+    },
+    {
+      "id": "circleci",
+      "name": "CircleCI",
+      "aliases": [
+        "circle ci"
+      ],
+      "broader": [
+        "ci-cd"
+      ],
+      "similar": [
+        "github-actions",
+        "jenkins"
+      ],
+      "evidencePostings": 36
+    },
+    {
+      "id": "gradle",
+      "name": "Gradle",
+      "aliases": [],
+      "broader": [
+        "software-engineering"
+      ],
+      "similar": [
+        "bazel"
+      ],
+      "evidencePostings": 63
+    },
+    {
+      "id": "bazel",
+      "name": "Bazel",
+      "aliases": [],
+      "broader": [
+        "software-engineering"
+      ],
+      "evidencePostings": 18
+    },
+    {
+      "id": "linux",
+      "name": "Linux",
+      "aliases": [
+        "linux administration",
+        "linux systems"
+      ],
+      "broader": [
+        "devops"
+      ],
+      "evidencePostings": 42
+    },
+    {
+      "id": "cilium",
+      "name": "Cilium",
+      "aliases": [],
+      "broader": [
+        "kubernetes"
+      ],
+      "evidencePostings": 13
+    },
+    {
+      "id": "observability",
+      "name": "Observability",
+      "aliases": [
+        "monitoring and observability"
+      ],
+      "broader": [
+        "devops"
+      ],
+      "evidencePostings": 11
+    },
+    {
+      "id": "grafana",
+      "name": "Grafana",
+      "aliases": [],
+      "broader": [
+        "observability"
+      ],
+      "evidencePostings": 37
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "aliases": [],
+      "broader": [
+        "observability"
+      ],
+      "evidencePostings": 26
+    },
+    {
+      "id": "datadog",
+      "name": "Datadog",
+      "aliases": [],
+      "broader": [
+        "observability"
+      ],
+      "evidencePostings": 27
+    },
+    {
+      "id": "opentelemetry",
+      "name": "OpenTelemetry",
+      "aliases": [
+        "otel"
+      ],
+      "broader": [
+        "observability"
+      ],
+      "evidencePostings": 16
+    },
+    {
+      "id": "splunk",
+      "name": "Splunk",
+      "aliases": [],
+      "broader": [
+        "observability"
+      ],
+      "evidencePostings": 12
+    },
+    {
+      "id": "eks",
+      "name": "Amazon EKS",
+      "aliases": [
+        "eks",
+        "aws eks"
+      ],
+      "broader": [
+        "aws",
+        "kubernetes"
+      ],
+      "evidencePostings": 23
+    },
+    {
+      "id": "ecs",
+      "name": "Amazon ECS",
+      "aliases": [
+        "ecs",
+        "aws ecs"
+      ],
+      "broader": [
+        "aws",
+        "docker"
+      ],
+      "evidencePostings": 22
+    },
+    {
+      "id": "sqs",
+      "name": "Amazon SQS",
+      "aliases": [
+        "sqs",
+        "aws sqs"
+      ],
+      "broader": [
+        "aws"
+      ],
+      "evidencePostings": 13
+    },
+    {
+      "id": "rds",
+      "name": "Amazon RDS",
+      "aliases": [
+        "rds",
+        "aws rds"
+      ],
+      "broader": [
+        "aws",
+        "databases"
+      ],
+      "evidencePostings": 13
+    },
+    {
+      "id": "aurora",
+      "name": "Amazon Aurora",
+      "aliases": [
+        "aws aurora"
+      ],
+      "broader": [
+        "aws",
+        "databases"
+      ],
+      "evidencePostings": 15
+    },
+    {
+      "id": "iam",
+      "name": "IAM",
+      "aliases": [
+        "identity and access management"
+      ],
+      "broader": [
+        "cloud-platforms"
+      ],
+      "evidencePostings": 37
+    },
+    {
+      "id": "active-directory",
+      "name": "Active Directory",
+      "aliases": [
+        "azure ad",
+        "entra id"
+      ],
+      "broader": [
+        "iam"
+      ],
+      "evidencePostings": 11
+    },
+    {
+      "id": "stream-processing",
+      "name": "Stream Processing",
+      "aliases": [
+        "streaming data",
+        "event streaming",
+        "real-time data processing"
+      ],
+      "broader": [
+        "data-engineering"
+      ]
+    },
+    {
+      "id": "kafka",
+      "name": "Kafka",
+      "aliases": [
+        "apache kafka"
+      ],
+      "broader": [
+        "stream-processing"
+      ],
+      "evidencePostings": 127
+    },
+    {
+      "id": "flink",
+      "name": "Flink",
+      "aliases": [
+        "apache flink"
+      ],
+      "broader": [
+        "stream-processing"
+      ],
+      "similar": [
+        "spark"
+      ],
+      "evidencePostings": 58
+    },
+    {
+      "id": "kinesis",
+      "name": "Amazon Kinesis",
+      "aliases": [
+        "kinesis",
+        "aws kinesis"
+      ],
+      "broader": [
+        "stream-processing",
+        "aws"
+      ],
+      "similar": [
+        "kafka"
+      ],
+      "evidencePostings": 11
+    },
+    {
+      "id": "apache-beam",
+      "name": "Apache Beam",
+      "aliases": [],
+      "broader": [
+        "stream-processing"
+      ],
+      "evidencePostings": 13
+    },
+    {
+      "id": "airflow",
+      "name": "Airflow",
+      "aliases": [
+        "apache airflow"
+      ],
+      "broader": [
+        "data-pipelines"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 81
+    },
+    {
+      "id": "dbt",
+      "name": "dbt",
+      "aliases": [
+        "data build tool"
+      ],
+      "broader": [
+        "data-pipelines"
+      ],
+      "evidencePostings": 17
+    },
+    {
+      "id": "fivetran",
+      "name": "Fivetran",
+      "aliases": [],
+      "broader": [
+        "data-pipelines"
+      ],
+      "evidencePostings": 10
+    },
+    {
+      "id": "temporal",
+      "name": "Temporal",
+      "aliases": [
+        "temporal.io"
+      ],
+      "broader": [
+        "backend-development"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 25
+    },
+    {
+      "id": "hadoop",
+      "name": "Hadoop",
+      "aliases": [
+        "apache hadoop",
+        "hdfs"
+      ],
+      "broader": [
+        "big-data"
+      ],
+      "similar": [
+        "spark"
+      ],
+      "evidencePostings": 61
+    },
+    {
+      "id": "hive",
+      "name": "Hive",
+      "aliases": [
+        "apache hive"
+      ],
+      "broader": [
+        "big-data"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 16
+    },
+    {
+      "id": "trino",
+      "name": "Trino",
+      "aliases": [
+        "presto",
+        "prestodb"
+      ],
+      "broader": [
+        "big-data"
+      ],
+      "evidencePostings": 21
+    },
+    {
+      "id": "data-warehousing",
+      "name": "Data Warehousing",
+      "aliases": [
+        "data warehouse",
+        "data warehouses"
+      ],
+      "broader": [
+        "data-engineering"
+      ],
+      "evidencePostings": 12
+    },
+    {
+      "id": "snowflake",
+      "name": "Snowflake",
+      "aliases": [],
+      "broader": [
+        "data-warehousing"
+      ],
+      "similar": [
+        "bigquery",
+        "databricks"
+      ],
+      "evidencePostings": 144
+    },
+    {
+      "id": "redshift",
+      "name": "Amazon Redshift",
+      "aliases": [
+        "redshift",
+        "aws redshift"
+      ],
+      "broader": [
+        "data-warehousing",
+        "aws"
+      ],
+      "similar": [
+        "snowflake",
+        "bigquery"
+      ],
+      "evidencePostings": 16
+    },
+    {
+      "id": "clickhouse",
+      "name": "ClickHouse",
+      "aliases": [],
+      "broader": [
+        "data-warehousing"
+      ],
+      "evidencePostings": 29
+    },
+    {
+      "id": "delta-lake",
+      "name": "Delta Lake",
+      "aliases": [],
+      "broader": [
+        "data-engineering"
+      ],
+      "similar": [
+        "apache-iceberg"
+      ],
+      "evidencePostings": 44
+    },
+    {
+      "id": "apache-iceberg",
+      "name": "Apache Iceberg",
+      "aliases": [
+        "iceberg"
+      ],
+      "broader": [
+        "data-engineering"
+      ],
+      "evidencePostings": 15
+    },
+    {
+      "id": "redis",
+      "name": "Redis",
+      "aliases": [],
+      "broader": [
+        "nosql-databases"
+      ],
+      "evidencePostings": 88
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB",
+      "aliases": [
+        "mongo",
+        "mongodb atlas"
+      ],
+      "broader": [
+        "nosql-databases"
+      ],
+      "evidencePostings": 46
+    },
+    {
+      "id": "cassandra",
+      "name": "Cassandra",
+      "aliases": [
+        "apache cassandra"
+      ],
+      "broader": [
+        "nosql-databases"
+      ],
+      "evidencePostings": 55
+    },
+    {
+      "id": "dynamodb",
+      "name": "DynamoDB",
+      "aliases": [
+        "amazon dynamodb",
+        "dynamo db"
+      ],
+      "broader": [
+        "nosql-databases",
+        "aws"
+      ],
+      "evidencePostings": 53
+    },
+    {
+      "id": "oracle-database",
+      "name": "Oracle Database",
+      "aliases": [
+        "oracle db",
+        "pl/sql"
+      ],
+      "broader": [
+        "databases"
+      ],
+      "evidencePostings": 15
+    },
+    {
+      "id": "search-engines",
+      "name": "Search Engines",
+      "aliases": [
+        "full-text search",
+        "information retrieval"
+      ],
+      "broader": [
+        "backend-development"
+      ]
+    },
+    {
+      "id": "elasticsearch",
+      "name": "Elasticsearch",
+      "aliases": [
+        "elastic search"
+      ],
+      "broader": [
+        "search-engines"
+      ],
+      "similar": [
+        "opensearch"
+      ],
+      "evidencePostings": 54
+    },
+    {
+      "id": "opensearch",
+      "name": "OpenSearch",
+      "aliases": [],
+      "broader": [
+        "search-engines"
+      ],
+      "evidencePostings": 23
+    },
+    {
+      "id": "solr",
+      "name": "Solr",
+      "aliases": [
+        "apache solr"
+      ],
+      "broader": [
+        "search-engines"
+      ],
+      "evidencePostings": 25
+    },
+    {
+      "id": "lucene",
+      "name": "Lucene",
+      "aliases": [
+        "apache lucene"
+      ],
+      "broader": [
+        "search-engines"
+      ],
+      "evidencePostings": 22
+    },
+    {
+      "id": "grpc",
+      "name": "gRPC",
+      "aliases": [],
+      "broader": [
+        "backend-development"
+      ],
+      "similar": [
+        "rest-apis",
+        "graphql"
+      ],
+      "evidencePostings": 47
+    },
+    {
+      "id": "api-design",
+      "name": "API Design",
+      "aliases": [],
+      "broader": [
+        "backend-development"
+      ],
+      "similar": [
+        "rest-apis"
+      ],
+      "evidencePostings": 21
+    },
+    {
+      "id": "oauth",
+      "name": "OAuth",
+      "aliases": [
+        "oauth2",
+        "oauth 2.0"
+      ],
+      "broader": [
+        "backend-development"
+      ],
+      "evidencePostings": 9
+    },
+    {
+      "id": "django",
+      "name": "Django",
+      "aliases": [],
+      "broader": [
+        "python",
+        "backend-development"
+      ],
+      "similar": [
+        "fastapi"
+      ],
+      "evidencePostings": 15
+    },
+    {
+      "id": "fastapi",
+      "name": "FastAPI",
+      "aliases": [],
+      "broader": [
+        "python",
+        "backend-development"
+      ],
+      "evidencePostings": 14
+    },
+    {
+      "id": "redux",
+      "name": "Redux",
+      "aliases": [],
+      "broader": [
+        "react"
+      ],
+      "evidencePostings": 31
+    },
+    {
+      "id": "svelte",
+      "name": "Svelte",
+      "aliases": [
+        "sveltekit"
+      ],
+      "broader": [
+        "frontend-frameworks"
+      ],
+      "similar": [
+        "react",
+        "vue"
+      ],
+      "evidencePostings": 14
+    },
+    {
+      "id": "storybook",
+      "name": "Storybook",
+      "aliases": [],
+      "broader": [
+        "frontend-development"
+      ],
+      "evidencePostings": 13
+    },
+    {
+      "id": "jax",
+      "name": "JAX",
+      "aliases": [],
+      "broader": [
+        "deep-learning-frameworks"
+      ],
+      "similar": [
+        "pytorch",
+        "tensorflow"
+      ],
+      "evidencePostings": 84
+    },
+    {
+      "id": "ray",
+      "name": "Ray",
+      "aliases": [
+        "ray.io",
+        "anyscale ray"
+      ],
+      "broader": [
+        "mlops"
+      ],
+      "similar": [
+        "spark"
+      ],
+      "caseSensitive": true,
+      "evidencePostings": 34
+    },
+    {
+      "id": "gpu-programming",
+      "name": "GPU Programming",
+      "aliases": [
+        "gpu computing",
+        "gpu kernels"
+      ],
+      "broader": [
+        "software-engineering"
+      ],
+      "evidencePostings": 14
+    },
+    {
+      "id": "cuda",
+      "name": "CUDA",
+      "aliases": [],
+      "broader": [
+        "gpu-programming"
+      ],
+      "evidencePostings": 16
+    },
+    {
+      "id": "ai-agents",
+      "name": "AI Agents",
+      "aliases": [
+        "agentic ai",
+        "llm agents",
+        "agentic workflows",
+        "ai agent"
+      ],
+      "broader": [
+        "llms"
+      ]
+    },
+    {
+      "id": "model-context-protocol",
+      "name": "Model Context Protocol",
+      "aliases": [
+        "mcp",
+        "mcp servers"
+      ],
+      "broader": [
+        "ai-agents"
+      ],
+      "evidencePostings": 57
+    },
+    {
+      "id": "langchain",
+      "name": "LangChain",
+      "aliases": [],
+      "broader": [
+        "ai-agents"
+      ],
+      "similar": [
+        "langgraph"
+      ],
+      "evidencePostings": 36
+    },
+    {
+      "id": "langgraph",
+      "name": "LangGraph",
+      "aliases": [],
+      "broader": [
+        "ai-agents"
+      ],
+      "evidencePostings": 26
+    },
+    {
+      "id": "llmops",
+      "name": "LLMOps",
+      "aliases": [
+        "llm ops"
+      ],
+      "broader": [
+        "mlops",
+        "llms"
+      ],
+      "evidencePostings": 11
+    },
+    {
+      "id": "vision-language-models",
+      "name": "Vision-Language Models",
+      "aliases": [
+        "vlms",
+        "vlm",
+        "vision language models"
+      ],
+      "broader": [
+        "deep-learning"
+      ],
+      "similar": [
+        "llms"
+      ],
+      "evidencePostings": 12
+    },
+    {
+      "id": "reinforcement-learning",
+      "name": "Reinforcement Learning",
+      "aliases": [
+        "deep reinforcement learning"
+      ],
+      "broader": [
+        "machine-learning"
+      ],
+      "evidencePostings": 9
+    },
+    {
+      "id": "robotics",
+      "name": "Robotics",
+      "aliases": [
+        "robot learning"
+      ],
+      "broader": [
+        "software-engineering"
+      ],
+      "evidencePostings": 48
+    },
+    {
+      "id": "operations-research",
+      "name": "Operations Research",
+      "aliases": [
+        "optimization modeling",
+        "mathematical optimization"
+      ],
+      "broader": [
+        "mathematics"
+      ],
+      "evidencePostings": 18
+    },
+    {
+      "id": "econometrics",
+      "name": "Econometrics",
+      "aliases": [],
+      "broader": [
+        "statistics"
+      ],
+      "similar": [
+        "causal-inference"
+      ],
+      "evidencePostings": 12
+    }
+  ],
+  "newAliases": [
+    {
+      "skill": "rag",
+      "aliases": [
+        "retrieval-augmented generation"
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "term": "Agent Bricks",
+      "reason": "Vendor product mostly mentioned in its own company's postings"
+    },
+    {
+      "term": "Lakeflow",
+      "reason": "Vendor product mostly mentioned in its own company's postings"
+    },
+    {
+      "term": "Cloudflare Workers",
+      "reason": "Vendor product mostly mentioned in its own company's postings"
+    },
+    {
+      "term": "Workers",
+      "reason": "Vendor product mostly mentioned in its own company's postings"
+    },
+    {
+      "term": "KV",
+      "reason": "Vendor product mostly mentioned in its own company's postings"
+    },
+    {
+      "term": "YouTube",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Elastic",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Slack",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Google",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Microsoft",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "LinkedIn",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Google Workspace",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Okta",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "OpenAI",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Anthropic",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Salesforce",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "SAP",
+      "reason": "Company or product name, not a skill"
+    },
+    {
+      "term": "Claude",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "Claude Code",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "Cursor",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "Codex",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "ChatGPT",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "Copilot",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "OpenAI API",
+      "reason": "AI assistant product; using it is not a distinguishing skill"
+    },
+    {
+      "term": "Computer Science",
+      "reason": "Degree or academic field"
+    },
+    {
+      "term": "Computer Engineering",
+      "reason": "Degree or academic field"
+    },
+    {
+      "term": "Electrical Engineering",
+      "reason": "Degree or academic field"
+    },
+    {
+      "term": "Economics",
+      "reason": "Degree or academic field"
+    },
+    {
+      "term": "Education",
+      "reason": "Degree or academic field"
+    },
+    {
+      "term": "Finance",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Legal",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Marketing",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Growth",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "GTM",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "MarTech",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "CRM",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Compliance",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Governance",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Safety",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Trust",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Privacy",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Detection",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "UX",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Research",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "Partner with product",
+      "reason": "Business domain or team, not a technical skill"
+    },
+    {
+      "term": "FDE",
+      "reason": "Role or title"
+    },
+    {
+      "term": "Architect",
+      "reason": "Role or title"
+    },
+    {
+      "term": "SRE",
+      "reason": "Role or title"
+    },
+    {
+      "term": "Designers",
+      "reason": "Role or title"
+    },
+    {
+      "term": "Solutions Architecture",
+      "reason": "Role or title"
+    },
+    {
+      "term": "CISOs",
+      "reason": "Role or title"
+    },
+    {
+      "term": "CIOs",
+      "reason": "Role or title"
+    },
+    {
+      "term": "Write",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Define",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Identify",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Designing",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Have built",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Have experience building",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Write clean",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Learning",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Explore",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Broad",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Extensive",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "Technical",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "and/or Go",
+      "reason": "Verb or sentence fragment"
+    },
+    {
+      "term": "SDKs",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Search",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Automation",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Scripting",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "HTTP",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "JSON",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "CDN",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "DNS",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Networking",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "IDEs",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "CLIs",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "internal APIs",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Authentication",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "GPU",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "IOT",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Windows",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "Jira",
+      "reason": "Too generic to be a useful requirement"
+    },
+    {
+      "term": "CCNA",
+      "reason": "Certification, not a skill (could be modelled separately later)"
+    },
+    {
+      "term": "CISSP",
+      "reason": "Certification, not a skill (could be modelled separately later)"
+    },
+    {
+      "term": "CSP",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "OCI",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "Sigma",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "Nomad",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "Lambda",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "BI",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "Node",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "NET",
+      "reason": "Ambiguous abbreviation"
+    },
+    {
+      "term": "JavaScript/TypeScript",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "TypeScript/JavaScript",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "C/C++",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "Hadoop/Spark",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "AI/ML",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "ML/AI",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "ETL/ELT",
+      "reason": "Two known skills joined by a slash; now matched by the extractor"
+    },
+    {
+      "term": "Golang",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "MongoDB Atlas",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "IaC",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "Infrastructure-as-Code",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "ArgoCD",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "Iceberg",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "MCP servers",
+      "reason": "Covered by an alias of a new or existing skill"
+    },
+    {
+      "term": "MCP",
+      "reason": "Covered by an alias of a new or existing skill"
+    }
+  ]
+}

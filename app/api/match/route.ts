@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import pdfParse from 'pdf-parse'
-import { neo4jStore } from '../../../lib/rdf/neo4j-store'
-import { semanticMatcher } from '../../../lib/rdf/semantic-matcher'
-import { SkillMatchDetail } from '../../../lib/rdf/types'
+import { getGraphStore } from '../../../lib/rdf/graph-store'
+import { collapseDuplicates, semanticMatcher } from '../../../lib/rdf/semantic-matcher'
+import { MATCH_TYPE_WEIGHTS } from '../../../lib/rdf/types'
 
-interface MatchedJob {
-  id: string
-  title: string
-  company: string
-  location: string
-  skills: string[]
-  description: string
-  url?: string
-  matchScore: number
-  summary: string
-  reasons: string[]
-  matchedSkills: SkillMatchDetail[]
-}
+export const runtime = 'nodejs'
+// Allow for a cold start (loading the graph) on serverless hosts
+export const maxDuration = 30
 
 const MIN_SCORE = 50
-const MAX_RESULTS = 10
+const MAX_RESULTS = 50
+const MAX_GAPS = 6
 const FIVE_MB = 5 * 1024 * 1024
 
 const validateFile = (file: File | null): { error?: string } => {
@@ -47,10 +38,18 @@ export async function POST(request: NextRequest) {
     const { error: fileError } = validateFile(file || null)
     if (fileError) return NextResponse.json({ error: fileError }, { status: 400 })
 
-    // Neo4j is required; initialization ensures ontology and SHACL are loaded.
-    await neo4jStore.initialize()
-    
-    const resumeText = await parseResume(file)
+    // Loads the ontology (SHACL-validated) on first use: in-memory or Neo4j.
+    const store = await getGraphStore()
+
+    let resumeText: string
+    try {
+      resumeText = await parseResume(file)
+    } catch {
+      return NextResponse.json(
+        { error: "Couldn't read this PDF. Please upload a text-based PDF (not a scanned image)." },
+        { status: 400 }
+      )
+    }
 
     // Extract skills via ontology names/aliases with word-boundary matching.
     const extractedSkillIds = await semanticMatcher.extractSkillsFromText(resumeText)
@@ -73,26 +72,30 @@ export async function POST(request: NextRequest) {
       })
     }
     
-    const topMatches = matchedJobs
+    const topMatches = collapseDuplicates(matchedJobs)
       .filter(match => match.matchScore >= MIN_SCORE)
       .slice(0, MAX_RESULTS)
+
+    // Skills that are missing most often across the top matches: what to learn next.
+    const gapCounts = new Map<string, number>()
+    for (const m of topMatches) for (const gap of m.missingSkills) gapCounts.set(gap, (gapCounts.get(gap) ?? 0) + 1)
+    const skillGaps = [...gapCounts.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, MAX_GAPS)
+      .map(([skill, jobs]) => ({ skill, jobs }))
     
-    const skillNames = resolveSkillNames(await neo4jStore.getAllSkills(), extractedSkillIds)
+    const skillNames = resolveSkillNames(await store.getAllSkills(), extractedSkillIds)
     
     return NextResponse.json({ 
       matches: topMatches,
+      skillGaps,
       extractedSkillCount: extractedSkillIds.length,
       extractedSkills: skillNames,
       semanticMatching: {
-        method: 'RDF/OWL Ontology with SPARQL',
-        matchTypes: ['exact', 'equivalent', 'narrower', 'similar', 'broader'],
-        weights: {
-          exact: 1.0,
-          equivalent: 1.0,
-          narrower: 0.85,
-          similar: 0.6,
-          broader: 0.5
-        }
+        method: 'RDF/OWL skill graph',
+        backend: store.backend,
+        matchTypes: Object.keys(MATCH_TYPE_WEIGHTS),
+        weights: MATCH_TYPE_WEIGHTS,
       }
     })
   } catch (error) {

@@ -40,6 +40,10 @@ export interface RDFSkill {
   narrowerSkills: string[]
   similarSkills: string[]
   equivalentSkills: string[]
+  /** Broad grouping (sm:SkillCategory) such as "Databases" rather than a concrete skill */
+  isCategory?: boolean
+  /** Name only matches with exact capitalisation ("Go", not the verb "go"); aliases are unaffected */
+  caseSensitive?: boolean
 }
 
 // Person entity from RDF
@@ -62,8 +66,16 @@ export interface RDFJobPosting {
   url?: string
   organization: string
   requiredSkills: string[]
+  /** "Any of" requirements: each inner list is satisfied by any one member */
+  requiredGroups?: string[][]
   preferredSkills: string[]
   datePosted?: string
+  applyUrl?: string
+  isRemote?: boolean
+  department?: string
+  employmentType?: string
+  salary?: string
+  source?: string
 }
 
 // Organization entity from RDF
