@@ -11,6 +11,8 @@ import { getGraphStore } from '../../../lib/rdf/graph-store'
 import { generateSummary, requirementLabels } from '../../../lib/rdf/semantic-matcher'
 
 export const runtime = 'nodejs'
+// Allow for a cold start (loading the graph) on serverless hosts
+export const maxDuration = 30
 export const dynamic = 'force-dynamic'
 
 const MAX_PAGE_SIZE = 50

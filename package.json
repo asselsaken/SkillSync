@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "validate": "tsx scripts/validate-graph.ts",
+    "prebuild": "npm run validate",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

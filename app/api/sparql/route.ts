@@ -10,6 +10,8 @@ import { semanticMatcher } from '../../../lib/rdf/semantic-matcher'
 import { SPARQL_PREFIXES } from '../../../lib/rdf/types'
 
 export const runtime = 'nodejs'
+// Allow for a cold start (loading the graph) on serverless hosts
+export const maxDuration = 30
 export const dynamic = 'force-dynamic'
 
 type QueryType = 'skills' | 'jobs' | 'related-skills' | 'jobs-by-skill' | 'skill-hierarchy' | 'match' | 'stats'

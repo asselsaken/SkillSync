@@ -5,6 +5,8 @@ import { collapseDuplicates, semanticMatcher } from '../../../lib/rdf/semantic-m
 import { MATCH_TYPE_WEIGHTS } from '../../../lib/rdf/types'
 
 export const runtime = 'nodejs'
+// Allow for a cold start (loading the graph) on serverless hosts
+export const maxDuration = 30
 
 const MIN_SCORE = 50
 const MAX_RESULTS = 50

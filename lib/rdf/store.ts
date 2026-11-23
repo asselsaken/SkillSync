@@ -30,9 +30,15 @@ export class MemoryGraphStore implements GraphStore {
   private skillsCache: RDFSkill[] | null = null
   private jobsCache: RDFJobPosting[] | null = null
 
+  /**
+   * @param validate Run SHACL on load. Defaults to on, except in production
+   *   where `npm run validate` already checked the same files at build time
+   *   (it takes several seconds of cold start). SKILLMATCH_VALIDATE_ON_LOAD=1 forces it.
+   */
   constructor(
     private readonly dataDir: string = ONTOLOGY_DIR,
     private readonly files: string[] = dataFiles(dataDir),
+    private readonly validate: boolean = process.env.NODE_ENV !== 'production' || process.env.SKILLMATCH_VALIDATE_ON_LOAD === '1',
   ) {}
 
   async initialize(): Promise<void> {
@@ -40,19 +46,20 @@ export class MemoryGraphStore implements GraphStore {
 
     const quads = this.files.flatMap((file) => readTurtleFile(file, this.dataDir))
 
-    const report = await validateQuads(quads)
-    if (!report.valid) {
-      const summary = report.violations
-        .slice(0, 5)
-        .map((v) => `${v.focusNode} ${v.path}: ${v.message}`)
-        .join('\n  ')
-      throw new Error(`SHACL validation failed (${report.violations.length} violations):\n  ${summary}`)
+    if (this.validate) {
+      const report = await validateQuads(quads)
+      if (!report.valid) {
+        const summary = report.violations
+          .slice(0, 5)
+          .map((v) => `${v.focusNode} ${v.path}: ${v.message}`)
+          .join('\n  ')
+        throw new Error(`SHACL validation failed (${report.violations.length} violations):\n  ${summary}`)
+      }
     }
 
     this.store = new N3.Store(quads)
-    this.sparqlStore = new oxigraph.Store(quads as unknown as oxigraph.Quad[])
     this.initialized = true
-    console.log(`In-memory RDF store loaded ${this.store.size} triples (SHACL valid)`)
+    console.log(`In-memory RDF store loaded ${this.store.size} triples${this.validate ? ' (SHACL valid)' : ' (validated at build time)'}`)
   }
 
   // ---------------------------------------------------------------- helpers
@@ -197,7 +204,9 @@ export class MemoryGraphStore implements GraphStore {
   // ---------------------------------------------------------------- SPARQL
 
   async executeSPARQL(query: string): Promise<SparqlRow[]> {
-    if (!this.sparqlStore) throw new Error('Store not initialized')
+    if (!this.initialized) throw new Error('Store not initialized')
+    // Built on first use: résumé matching never needs the SPARQL engine.
+    if (!this.sparqlStore) this.sparqlStore = new oxigraph.Store(this.store.getQuads(null, null, null, null) as unknown as oxigraph.Quad[])
     const result = this.sparqlStore.query(query)
 
     if (typeof result === 'boolean') return [{ result: String(result) }]
