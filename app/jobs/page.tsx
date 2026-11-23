@@ -185,7 +185,7 @@ export default function JobsPage() {
                     {job.summary && (
                       <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4 line-clamp-3">{job.summary}</p>
                     )}
-                    {job.salary && <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-4">💰 {job.salary}</p>}
+                    {job.salary && <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-4">Salary: {job.salary}</p>}
 
                     <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
                       <div className="flex flex-wrap gap-2 flex-1">

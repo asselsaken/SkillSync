@@ -5,21 +5,21 @@ const REPO = 'https://github.com/asselsaken/SkillSync'
 const steps = [
   {
     title: 'Read your skills',
-    body: 'Your résumé is scanned for 220+ skills and their other spellings. Short or ambiguous names are matched carefully: "R" is not found inside "for", and "Go" only counts as the language.',
+    body: 'Your résumé is checked for more than 220 skills and their other spellings, like "Postgres" for PostgreSQL.',
   },
   {
-    title: 'Understand how skills relate',
-    body: 'A knowledge graph (RDF/OWL) knows that PostgreSQL is a kind of SQL, that PyTorch and TensorFlow are close substitutes, and that "AWS, GCP or Azure" means any one cloud. Matches are credited accordingly.',
+    title: 'Connect related skills',
+    body: 'A skill map knows that PostgreSQL is a kind of SQL and that PyTorch is close to TensorFlow, so related experience counts.',
   },
   {
-    title: 'Rank real openings and explain why',
-    body: 'Thousands of current postings from company job boards are scored by how many of their requirements you cover. Every result shows which requirements you meet, how, and what is missing.',
+    title: 'Rank real jobs',
+    body: 'About 5,400 current openings are scored by how many of their requirements you meet. Each result shows what you have and what is missing.',
   },
 ]
 
 const facts = [
-  'Jobs refresh daily from the public Greenhouse, Lever and Ashby job boards of 67 tech companies.',
-  'The skill graph grows: new skills found in postings are proposed by Claude, checked by strict rules and SHACL validation, and reviewed in a pull request before they go live.',
+  'Jobs are updated every day from the public job pages of 66 tech companies.',
+  'The skill map grows over time: an AI assistant (Claude) suggests new skills found in job postings, automatic checks catch mistakes, and I approve every change.',
   'Your résumé is processed in memory and never stored.',
 ]
 
@@ -34,12 +34,12 @@ export default function AboutPage() {
       </header>
 
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-zinc-900 dark:text-white tracking-tighter leading-tight">
-        Skills-first job matching, explained.
+        About SkillMatch
       </h1>
       <p className="text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-12">
-        Keyword search misses people whose experience is described in different words, and floods them with roles
-        that only share a buzzword. SkillMatch compares what you can do with what each job needs, using a graph of
-        how skills relate, and shows its reasoning.
+        Most job search tools look for exact words, so they miss jobs that describe your skills differently.
+        SkillMatch compares what you can do with what each job needs, gives credit for related skills, and shows
+        you exactly why each job is a match.
       </p>
 
       <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-500 mb-4">How it works</h2>
@@ -65,9 +65,8 @@ export default function AboutPage() {
       <div className="h-px bg-zinc-200 dark:bg-zinc-800 mb-8" />
 
       <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed mb-6">
-        Built by Assel Sakenkyzy. It started as a final project for Info 290 at the UC Berkeley School of
-        Information and grew into a working product. Built with Next.js, TypeScript, RDF/OWL, SHACL, SPARQL
-        (Oxigraph) and Claude Code.
+        Built by Assel Sakenkyzy. It started as my final project for Info 290 at the UC Berkeley School of
+        Information. Built with Next.js, TypeScript and a semantic-web skill graph (RDF/OWL, SHACL, SPARQL).
       </p>
       <div className="flex flex-wrap gap-3">
         <Link href="/" className="px-4 py-2 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 font-medium">

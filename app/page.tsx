@@ -136,10 +136,9 @@ export default function Home() {
           what you can do.
         </h1>
         <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed">
-          Upload your résumé. SkillMatch reads your skills, understands how they relate (PostgreSQL counts for SQL,
-          PyTorch is close to TensorFlow) and ranks
-          {stats ? ` ${stats.totalJobs.toLocaleString()} open roles from ${stats.totalOrganizations} companies` : ' real open roles'}
-          {' '}by how well you cover each one, with the reasons.
+          Upload your résumé and see which of
+          {stats ? ` ${stats.totalJobs.toLocaleString()} open tech jobs from ${stats.totalOrganizations} companies` : ' today\'s open tech jobs'}
+          {' '}fit you best, and why. Related skills count too: PostgreSQL counts as SQL.
         </p>
       </section>
 
@@ -241,8 +240,8 @@ function Results(props: {
       {/* What to learn next */}
       {data.skillGaps && data.skillGaps.length > 0 && data.matches.length > 0 && (
         <div className="p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">Skills that would open the most doors</h2>
-          <p className="text-sm text-zinc-500 mb-4">Requirements you&apos;re missing most often across your top {data.matches.length} matches.</p>
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white mb-1">Skills to learn next</h2>
+          <p className="text-sm text-zinc-500 mb-4">The requirements you&apos;re missing most often in your top {data.matches.length} matches.</p>
           <ul className="space-y-2">
             {data.skillGaps.map((g) => (
               <li key={g.skill} className="flex items-center gap-3 text-sm">

@@ -26,7 +26,7 @@ Open your new address and:
 ## 3. Optional
 
 - **Custom domain:** *Project → Settings → Domains*. You need to own the domain.
-- **Put the link on GitHub:** on the repository page, click the ⚙️ next to **About** and paste the URL into **Website**.
+- **Put the link on GitHub:** on the repository page, click the gear icon next to **About** and paste the URL into **Website**.
 - **Neo4j:** to run against Neo4j + neosemantics instead of the built-in store, set `NEO4J_URI`, `NEO4J_USER` and `NEO4J_PASSWORD` in *Settings → Environment Variables*. The database must be reachable from Vercel, and the n10s plugin isn't available on Neo4j AuraDB.
 
 ## How it runs
