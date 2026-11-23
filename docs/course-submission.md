@@ -1,3 +1,8 @@
+> **Note:** this is the original final-project submission for Info 290 at the UC Berkeley School of Information, kept as written. It describes the project at submission time, when it was called SkillSync. The [README](../README.md) describes the current version. Main differences since then:
+> - The LLM-assisted entity extraction and the spaCy layer described below were plans and were not implemented. Instead, the skill graph now grows through a reviewed pipeline: candidates are found in real postings, Claude Code proposes skills, and every proposal is checked by rules and SHACL before it's added.
+> - Jobs come from the public Greenhouse, Lever and Ashby job boards (about 5,400 postings) instead of hand-written sample data.
+> - Neo4j is optional; by default the graph runs in memory with Oxigraph for SPARQL.
+
 Info 290 Final Project Submission
 
 Course: Info 290 Final Project Submission  
@@ -113,7 +118,7 @@ Code Function: `lib/rdf/semantic-matcher.ts` computes semantic matches between r
 Final Generation Prompt: “Implement a semantic matcher that, given candidate skill IDs and job postings with required skills, uses ontology relations (exact/equivalent/broader/narrower/similar) with weights to score and sort jobs, returning matched skill details, reasons, and normalized scores.”
 
 Link to Code: `lib/rdf/semantic-matcher.ts`, `lib/rdf/neo4j-store.ts`, `lib/rdf/sparql.ts`, `app/api/match/route.ts`
-Code Repository: https://github.com/<your-username>/SkillSync
+Code Repository: https://github.com/asselsaken/SkillSync
 
 Agentic AI:
 Framework: None in current version.
