@@ -1,20 +1,20 @@
 {
-  "fetchedAt": "2026-11-26T20:11:09.367Z",
-  "jobs": 5432,
+  "fetchedAt": "2026-11-27T19:57:25.284Z",
+  "jobs": 5443,
   "companies": [
     {
       "slug": "affirm",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 216,
-      "relevant": 133,
-      "kept": 131
+      "fetched": 218,
+      "relevant": 135,
+      "kept": 133
     },
     {
       "slug": "airbnb",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 201,
+      "fetched": 200,
       "relevant": 59,
       "kept": 56
     },
@@ -38,9 +38,9 @@
       "slug": "asana",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 109,
-      "relevant": 44,
-      "kept": 43
+      "fetched": 107,
+      "relevant": 42,
+      "kept": 41
     },
     {
       "slug": "block",
@@ -54,15 +54,15 @@
       "slug": "brex",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 270,
-      "relevant": 67,
+      "fetched": 266,
+      "relevant": 63,
       "kept": 59
     },
     {
       "slug": "chime",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 77,
+      "fetched": 76,
       "relevant": 26,
       "kept": 26
     },
@@ -78,7 +78,7 @@
       "slug": "cloudflare",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 528,
+      "fetched": 533,
       "relevant": 244,
       "kept": 233
     },
@@ -86,7 +86,7 @@
       "slug": "cohere",
       "board": "ashby",
       "ok": true,
-      "fetched": 123,
+      "fetched": 120,
       "relevant": 47,
       "kept": 47
     },
@@ -110,15 +110,15 @@
       "slug": "databricks",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 882,
-      "relevant": 498,
-      "kept": 485
+      "fetched": 889,
+      "relevant": 503,
+      "kept": 490
     },
     {
       "slug": "datadog",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 391,
+      "fetched": 390,
       "relevant": 58,
       "kept": 57
     },
@@ -150,23 +150,23 @@
       "slug": "elastic",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 375,
-      "relevant": 223,
-      "kept": 223
+      "fetched": 369,
+      "relevant": 218,
+      "kept": 218
     },
     {
       "slug": "elevenlabs",
       "board": "ashby",
       "ok": true,
-      "fetched": 114,
-      "relevant": 31,
-      "kept": 30
+      "fetched": 109,
+      "relevant": 32,
+      "kept": 31
     },
     {
       "slug": "figma",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 141,
+      "fetched": 140,
       "relevant": 45,
       "kept": 42
     },
@@ -174,17 +174,17 @@
       "slug": "flexport",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 212,
-      "relevant": 29,
-      "kept": 29
+      "fetched": 210,
+      "relevant": 28,
+      "kept": 28
     },
     {
       "slug": "gitlab",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 241,
-      "relevant": 99,
-      "kept": 93
+      "fetched": 243,
+      "relevant": 101,
+      "kept": 95
     },
     {
       "slug": "gusto",
@@ -198,9 +198,9 @@
       "slug": "harvey",
       "board": "ashby",
       "ok": true,
-      "fetched": 390,
-      "relevant": 87,
-      "kept": 87
+      "fetched": 387,
+      "relevant": 85,
+      "kept": 85
     },
     {
       "slug": "instacart",
@@ -214,9 +214,9 @@
       "slug": "klaviyo",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 123,
-      "relevant": 40,
-      "kept": 40
+      "fetched": 124,
+      "relevant": 41,
+      "kept": 41
     },
     {
       "slug": "linear",
@@ -230,7 +230,7 @@
       "slug": "lyft",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 144,
+      "fetched": 143,
       "relevant": 67,
       "kept": 67
     },
@@ -246,9 +246,9 @@
       "slug": "mongodb",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 421,
-      "relevant": 163,
-      "kept": 163
+      "fetched": 424,
+      "relevant": 167,
+      "kept": 167
     },
     {
       "slug": "notion",
@@ -262,7 +262,7 @@
       "slug": "nuro",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 106,
+      "fetched": 107,
       "relevant": 79,
       "kept": 79
     },
@@ -318,7 +318,7 @@
       "slug": "pinterest",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 167,
+      "fetched": 165,
       "relevant": 84,
       "kept": 83
     },
@@ -374,7 +374,7 @@
       "slug": "robinhood",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 162,
+      "fetched": 161,
       "relevant": 67,
       "kept": 67
     },
@@ -382,9 +382,9 @@
       "slug": "roblox",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 254,
-      "relevant": 189,
-      "kept": 180
+      "fetched": 259,
+      "relevant": 190,
+      "kept": 181
     },
     {
       "slug": "runway",
@@ -398,9 +398,9 @@
       "slug": "samsara",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 299,
-      "relevant": 65,
-      "kept": 60
+      "fetched": 295,
+      "relevant": 66,
+      "kept": 61
     },
     {
       "slug": "scaleai",
@@ -422,24 +422,24 @@
       "slug": "snowflake",
       "board": "ashby",
       "ok": true,
-      "fetched": 376,
-      "relevant": 201,
-      "kept": 199
+      "fetched": 380,
+      "relevant": 203,
+      "kept": 201
     },
     {
       "slug": "sofi",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 58,
-      "relevant": 16,
-      "kept": 16
+      "fetched": 57,
+      "relevant": 15,
+      "kept": 15
     },
     {
       "slug": "spotify",
       "board": "lever",
       "ok": true,
-      "fetched": 97,
-      "relevant": 37,
+      "fetched": 98,
+      "relevant": 38,
       "kept": 33
     },
     {
@@ -454,23 +454,23 @@
       "slug": "stripe",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 768,
-      "relevant": 227,
-      "kept": 213
+      "fetched": 769,
+      "relevant": 229,
+      "kept": 216
     },
     {
       "slug": "supabase",
       "board": "ashby",
       "ok": true,
-      "fetched": 83,
-      "relevant": 51,
-      "kept": 51
+      "fetched": 82,
+      "relevant": 50,
+      "kept": 50
     },
     {
       "slug": "toast",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 300,
+      "fetched": 299,
       "relevant": 73,
       "kept": 72
     },
@@ -478,9 +478,9 @@
       "slug": "twilio",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 113,
-      "relevant": 39,
-      "kept": 38
+      "fetched": 114,
+      "relevant": 40,
+      "kept": 39
     },
     {
       "slug": "twitch",
@@ -510,7 +510,7 @@
       "slug": "verkada",
       "board": "greenhouse",
       "ok": true,
-      "fetched": 350,
+      "fetched": 349,
       "relevant": 137,
       "kept": 130
     },
